@@ -1,9 +1,30 @@
 public class Angle {
-    public static double rad(double x){
-        return x / (180 / Math.PI);
+    public static final String RADIANS = "rad";
+    public static final String DEGREES = "deg";
+    
+    private double rad;
+
+    public double getRad(){
+        return this.rad;
     }
 
-    public static double deg(double x){
-        return x * (180 / Math.PI);
+    public double getDeg(){
+        return this.rad * (180 / Math.PI);
+    }
+    public void setAngle(double val){
+        this.rad = val;
+    }
+    
+    public Angle(Polar polska){
+        this.rad = polska.getTheta();
+        
+    }
+    
+    public static double toRad(Angle x){
+        return x.getDeg() / (180 / Math.PI);
+    }
+
+    public static double toDeg(Angle x){
+        return x.getRad() * (180 / Math.PI);
     }
 }
