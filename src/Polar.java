@@ -1,9 +1,21 @@
 import static java.lang.Math.atan;
 
 public class Polar {
-    public double mag;
-    public double theta;
+    private double mag;
+    private double theta;
+    public void setMag(double val){
+        this.mag = val;
+    }
+    public double getMag(){
+        return this.mag;
+    }
 
+    public void setTheta(double val){
+        this.theta = val;
+    }
+    public double getTheta(){
+        return this.theta
+    }
     public Polar(double a, double b) {
         this.mag = a;
         this.theta = b;
