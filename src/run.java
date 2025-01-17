@@ -42,5 +42,5 @@ thanks
 terminate
     -> Stops the program.
 
-Happy Vectoring!
+Good luck, comrade!
  */
