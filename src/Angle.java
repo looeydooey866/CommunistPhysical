@@ -11,8 +11,12 @@ public class Angle {
     public double getDeg(){
         return this.rad * (180 / Math.PI);
     }
-    public void setAngle(double val){
+    public void setRad(double val){
         this.rad = val;
+    }
+
+    public void setDeg(double val){
+        this.rad = val * (180 / Math.PI);
     }
     
     public Angle(Polar polska){
