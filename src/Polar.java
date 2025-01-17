@@ -2,7 +2,7 @@ import static java.lang.Math.atan;
 
 public class Polar {
     private double mag;
-    private double theta;
+    private Angle theta;
     public void setMag(double val){
         this.mag = val;
     }
@@ -11,20 +11,20 @@ public class Polar {
     }
 
     public void setTheta(double val){
-        this.theta = val;
+        this.theta.setRad(val);
     }
     public double getTheta(){
-        return this.theta
+        return this.theta.getRad();
     }
     public Polar(double a, double b) {
         this.mag = a;
-        this.theta = b;
+        this.theta.setRad(b);
     }
 
     public static Polar pol(Rect x){
         Polar cur = new Polar(0,0);
         cur.mag = x.getMagnitude();
-        cur.theta = atan(x.y / x.x);
+        cur.theta.setRad(atan(x.y / x.x));
         return cur;
     }
 }
