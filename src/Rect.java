@@ -31,8 +31,30 @@ public class Rect {
 
     public static Rect rec(Polar x){
         Rect cur = new Rect(0,0);
-        cur.x = Math.cos(x.getTheta())*x.getMag();
-        cur.y = Math.sin(x.getTheta())*x.getMag();
+        cur.x = x.getX();
+        cur.y = x.getY();
+        return cur;
+    }
+
+    public void setCoords(double x, double y){
+        this.x = x;
+        this.y = y;
+    }
+
+    public void addWith(Rect other){
+        this.setX(this.getX() + other.getX());
+        this.setY(this.getY() + other.getY());
+    }
+
+    public void subtractWith(Rect other){
+        this.setX(this.getX() - other.getX());
+        this.setY(this.getY() - other.getY());
+    }
+
+    public Rect scalarMult(double x){
+        Rect cur = this;
+        cur.setX(this.getX() * x);
+        cur.setY(this.getY() * x);
         return cur;
     }
 }

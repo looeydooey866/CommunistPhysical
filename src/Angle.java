@@ -20,15 +20,15 @@ public class Angle {
     }
     
     public Angle(Polar polska){
-        this.rad = polska.getTheta();
-        
-    }
-    
-    public static double toRad(Angle x){
-        return x.getDeg() / (180 / Math.PI);
+        this.rad = polska.getTheta().getRad();
     }
 
-    public static double toDeg(Angle x){
-        return x.getRad() * (180 / Math.PI);
+    public static double convertToRad(double x){
+        return x / (180 / Math.PI);
     }
+
+    public static double convertToDeg(double x){
+        return x / (Math.PI / 180);
+    }
+
 }

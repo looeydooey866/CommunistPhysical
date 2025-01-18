@@ -57,15 +57,22 @@ public class Vector {
     }
 
     public static void printPol(Vector x){
-        System.out.println(String.format("Magnitude: %.5f, Direction: %.5f radians",x.polform.getMag(),x.polform.getTheta()));
+        System.out.println(String.format("Magnitude: %.5f, Direction: %.5f radians",x.polform.getMag(),x.polform.getTheta().getRad()));
     }
 
     public static void printPolDeg(Vector x){
-        System.out.println(String.format("Magnitude: %.5f, Direction: %.5f degrees",x.polform.mag,Angle.deg(x.polform.getTheta())));
+        System.out.println(String.format("Magnitude: %.5f, Direction: %.5f degrees",x.polform.getMag(),x.polform.getTheta().getRad()));
     }
 
     public static void print(Vector x){
         printRec(x);
         printPolDeg(x);
+    }
+
+    public Vector scalarMult(double x){
+        Vector cur = this;
+        cur.recform = cur.recform.scalarMult(x);
+        cur.polform = cur.polform.scalarMult(x);
+        return cur;
     }
 }
