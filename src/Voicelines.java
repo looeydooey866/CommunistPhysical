@@ -121,7 +121,7 @@ public class Voicelines {
                     case Verbose -> "Changed " + setting + " to " + newValue + ", sire.";
                     case Normal -> "Changed " + setting + " to " + newValue + ".";
                     case Silent -> "";
-                    case Communist -> "wow something happened such wow";
+                    case Communist -> "wow something happened such wow"+setting+newValue+setting+newValue;
                     default -> "Unknown style.";
                 }
         );

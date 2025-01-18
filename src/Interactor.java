@@ -68,22 +68,20 @@ public class Interactor {
                         s = s.substring(1);
                     }
 
-                    double scalar = 0.0;
+                    String decipart = "";
                     while ((s.charAt(0) >= '0') && (s.charAt(0) <= '9')){
-                        scalar *= 10;
-                        scalar += (s.charAt(0) - '0');
+                        decipart += s.charAt(0);
                         s = s.substring(1);
                     }
                     if (s.charAt(0) == '.'){
+                        decipart += s.charAt(0);
                         s = s.substring(1);
-                        double decipart = 0.0;
                         while (s.charAt(0) >= '0' && s.charAt(0) <= '9'){
-                            decipart += (s.charAt(0) - '0');
-                            decipart /= 10;
+                            decipart += s.charAt(0);
                             s = s.substring(1);
                         }
-                        scalar += decipart;
                     }
+                    double scalar = Double.parseDouble(decipart);
 
                     if (s.isEmpty()){
                         Voicelines.errorBadName();
