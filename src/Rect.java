@@ -16,6 +16,11 @@ public class Rect {
     public void setY(double val){
         this.y = val;
     }
+
+    public void setCoords(double x, double y){
+        this.x = x;
+        this.y = y;
+    }
     
     public double getX(){
         return this.x;
