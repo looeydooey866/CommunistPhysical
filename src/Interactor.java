@@ -14,14 +14,11 @@ public class Interactor {
 
     public void acceptQuery(){
         Scanner Parser = new Scanner(Reader.nextLine());
-
         queries.clear();
         while (Parser.hasNext()){
             queries.add(Parser.next());
         }
-
         String queryType = queries.removeFirst();
-
         switch(queryType){
             case "terminate" -> terminate();
             case "list" -> list();
@@ -81,7 +78,10 @@ public class Interactor {
                             s = s.substring(1);
                         }
                     }
-                    double scalar = Double.parseDouble(decipart);
+                    double scalar = 1;
+                    if (!decipart.isEmpty()){
+                        scalar = Double.parseDouble(decipart);
+                    }
 
                     if (s.isEmpty()){
                         Voicelines.errorBadName();

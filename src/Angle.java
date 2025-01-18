@@ -4,6 +4,12 @@ public class Angle {
     
     private double rad;
 
+    public void normalize() {
+        while (this.getRad() < 0){
+            this.add(Math.PI*2);
+        }
+    }
+
     public double getRad(){
         return this.rad;
     }
@@ -13,18 +19,22 @@ public class Angle {
     }
     public void setRad(double val){
         this.rad = val;
+        normalize();
     }
 
     public void setDeg(double val){
         this.rad = val / (180 / Math.PI);
+        normalize();
     }
     
     public Angle(Polar polska){
         this.rad = polska.getTheta().getRad();
+        normalize();
     }
 
     public Angle(double x){
         this.rad = x;
+        normalize();
     }
 
     public static double convertToRad(double x){
@@ -35,4 +45,8 @@ public class Angle {
         return x / (Math.PI / 180);
     }
 
+    public void add(double x){
+        this.setRad(this.getRad() + x);
+        normalize();
+    }
 }
