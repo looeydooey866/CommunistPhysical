@@ -1,10 +1,12 @@
+import java.util.Objects;
+
 import static java.lang.Math.PI;
 import static java.lang.Math.atan;
 import static java.lang.StrictMath.abs;
 
 public class Polar {
-    private double mag;
-    private Angle theta;
+    private double mag = 0;
+    private Angle theta = new Angle(0);
     public void setMag(double val){
         this.mag = val;
     }
@@ -18,13 +20,14 @@ public class Polar {
     public void setThetaDeg(double val){this.theta.setDeg(val);}
     public void setTheta(Angle val){this.theta = val;}
     public void setThetaInput(double val){
-        if (Settings.InputAngleFormat == Angle.DEGREES){
+        if (Settings.InputAngleFormat.equals(Angle.DEGREES)){
             this.setThetaDeg(val);
         }
-        else if (Settings.InputAngleFormat == Angle.RADIANS){
+        else if (Settings.InputAngleFormat.equals(Angle.RADIANS)){
             this.setThetaRad(val);
         }
     }
+
     public Angle getTheta(){
         return this.theta;
     }

@@ -1,16 +1,15 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Scanner;
 // setting class (input, output in radians or degrees)
 public class Interactor {
-    private HashMap<String,Vector> dataTable = new HashMap<>();
-    private Scanner Reader = new Scanner(System.in);
-    private ArrayList<String> queries = new ArrayList<>();
+    private final HashMap<String,Vector> dataTable = new HashMap<>();
+    private final Scanner Reader = new Scanner(System.in);
+    private final ArrayList<String> queries = new ArrayList<>();
     public Boolean terminated = false;
 
     public void query(){
-        System.out.println("Enter your query, good sire. Do not forget to thank me.");
+        Voicelines.askQuery();
     }
 
     public void acceptQuery(){
@@ -30,33 +29,32 @@ public class Interactor {
             case "retrieve" -> retrieve();
             case "thanks" -> thank();
             case "set" -> set();
+            case "debug" -> debug();
             default -> unknownQuery();
         }
     }
 
     private void terminate(){
-        System.out.println("Your wish is my command, Sire. I bid you farewell.");
+        Voicelines.announceTermination();
         terminated = true;
     }
 
     private void store(){
         String storingType = queries.removeFirst();
         String storingName = queries.removeFirst();
-        if (Objects.equals(storingType, "polar")){
+        if (storingType.equals("polar")){
             Vector cur = new Vector(0,0,0,0);
             cur.polform.setMag(Double.parseDouble(queries.removeFirst()));
             cur.polform.setThetaInput(Double.parseDouble(queries.removeFirst()));
             cur.recform = Rect.rec(cur.polform);
             dataTable.put(storingName,cur);
-        }
-        else if (Objects.equals(storingType, "rect")){
+        } else if (storingType.equals("rect")){
             Vector cur = new Vector(0,0,0,0);
             cur.recform.setX(Double.parseDouble(queries.removeFirst()));
             cur.recform.setY(Double.parseDouble(queries.removeFirst()));
             cur.polform = Polar.pol(cur.recform);
             dataTable.put(storingName,cur);
-        }
-        else if (Objects.equals(storingType, "equation")){
+        } else if (storingType.equals("equation")){
             String equals = queries.removeFirst();
             Vector cur = new Vector(0,0,0,0);
             boolean sign = false;
@@ -67,12 +65,11 @@ public class Interactor {
                     boolean skip = false;
                     if (s.charAt(0) == '-') {
                         minus ^= true;
-                        skip = true;
+                        s = s.substring(1);
                     }
-                    s = s.substring(1);
 
                     double scalar = 0.0;
-                    while (s.charAt(0) >= '0' && s.charAt(0) <= '9'){
+                    while ((s.charAt(0) >= '0') && (s.charAt(0) <= '9')){
                         scalar *= 10;
                         scalar += (s.charAt(0) - '0');
                         s = s.substring(1);
@@ -89,69 +86,61 @@ public class Interactor {
                     }
 
                     if (s.isEmpty()){
-                        System.out.println("Error sire, you hath not specified a suitable vector nameth!");
+                        Voicelines.errorBadName();
                         return;
                     }
 
                     if (!minus) {
-                        cur.add(dataTable.get((skip?s.substring(1):s)).scalarMult(scalar));
+                        cur.add(dataTable.get(s).scale(scalar));
                     }
                     else {
-                        cur.subtract(dataTable.get((skip?s.substring(1):s)).scalarMult(scalar));
+                        cur.subtract(dataTable.get(s).scale(scalar));
                     }
                     minus = false;
                 }
                 else {
-                    minus = (Objects.equals(s, "-"));
+                    minus = (s.equals("-"));
                 }
                 sign ^= true;
             }
             dataTable.put(storingName,cur);
         } else {
-            System.out.println("I don't know what you are talking about, sire. You said " + storingType + " and it confused me heavily.");
+            Voicelines.errorStorageType(storingType);
             return;
         }
 
-        System.out.println("Stored " + storingName + ", sire.");
+        Voicelines.stored(storingName);
     }
 
     private void retrieve(){
         String name = queries.removeFirst();
         String type = queries.removeFirst();
         switch(type){
-            case "polar" -> {
-                String angle = queries.removeFirst();
-                if (Objects.equals(angle, "deg")){
-                    Vector.printPolDeg(dataTable.get(name));
-                }
-                else {
-                    Vector.printPol(dataTable.get(name));
-                }
-            }
+            case "polar" -> Vector.printPol(dataTable.get(name));
             case "rect" ->  Vector.printRec(dataTable.get(name));
             case "both" ->  Vector.print(dataTable.get(name));
-            default -> System.out.println("Query not recognised!");
+            default -> Voicelines.retrievalTypeError(type);
         }
     }
 
     private void thank(){
-        System.out.println("It is my pleasure, Sire.");
+        Voicelines.thank();
     }
 
     private void list(){
-        System.out.println("Here are all your available vectors, Sire. Please enjoy your delectable selection.");
+        Voicelines.listVector();
         System.out.println(dataTable.keySet());
     }
 
     private void unknownQuery(){
-        System.out.println("Sorry, I perchance am not able to fully Digest your Query. Please perchance input another query! Tally ho!");
+        Voicelines.queryNotRecognised();
     }
 
     private void set(){
         String settingName = queries.removeFirst();
         switch(settingName){
             case "precision" -> changePrecision();
-            case "verbosity" -> changeVerbosity();
+            case "style" -> changeStyle();
             case "inputangleformat" -> changeInputAngleFormat();
             case "outputangleformat" -> changeOutputAngleFormat();
         }
@@ -160,20 +149,28 @@ public class Interactor {
     private void changePrecision(){
         int precision = Integer.parseInt(queries.removeFirst());
         Settings.setPrecision(precision);
+        Voicelines.changeSetting("precision",Integer.toString(precision));
     }
 
-    private void changeVerbosity(){
-        boolean verbose = Boolean.parseBoolean(queries.removeFirst());
-        Settings.setVerbose(verbose);
+    private void changeStyle(){
+        String style = queries.removeFirst();
+        Settings.setStyle(style);
+        Voicelines.changeSetting("style",style);
     }
 
     private void changeInputAngleFormat(){
         String angleformat = queries.removeFirst();
         Settings.setInputAngleFormat(angleformat);
+        Voicelines.changeSetting("the input angle format",angleformat);
     }
 
     private void changeOutputAngleFormat(){
         String angleformat = queries.removeFirst();
         Settings.setOutputAngleFormat(angleformat);
+        Voicelines.changeSetting("the output angle format",angleformat);
+    }
+
+    private void debug(){
+        Voicelines.debug();
     }
 }

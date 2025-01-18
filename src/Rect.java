@@ -1,8 +1,8 @@
 import static java.lang.Math.sqrt;
 
 public class Rect {
-    private double x;
-    private double y;
+    private double x = 0;
+    private double y = 0;
     
     public Rect(double x, double y){
         this.x = x;
@@ -41,10 +41,6 @@ public class Rect {
         return cur;
     }
 
-    public void setCoords(double x, double y){
-        this.x = x;
-        this.y = y;
-    }
 
     public void addWith(Rect other){
         this.setX(this.getX() + other.getX());

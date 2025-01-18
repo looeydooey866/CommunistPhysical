@@ -16,11 +16,15 @@ public class Angle {
     }
 
     public void setDeg(double val){
-        this.rad = val * (180 / Math.PI);
+        this.rad = val / (180 / Math.PI);
     }
     
     public Angle(Polar polska){
         this.rad = polska.getTheta().getRad();
+    }
+
+    public Angle(double x){
+        this.rad = x;
     }
 
     public static double convertToRad(double x){

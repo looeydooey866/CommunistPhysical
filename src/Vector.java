@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 import static java.lang.Math.abs;
 
 public class Vector {
@@ -53,26 +55,38 @@ public class Vector {
     }
 
     public static void printRec(Vector x){
-        System.out.println(String.format("X: %.5f, Y: %.5f",x.recform.getX(),x.recform.getY()));
+        int p = Settings.Precision;
+        System.out.println(String.format("X: %."+p+"f, Y: %."+p+"f",x.recform.getX(),x.recform.getY()));
     }
 
     public static void printPol(Vector x){
-        System.out.println(String.format("Magnitude: %.5f, Direction: %.5f radians",x.polform.getMag(),x.polform.getTheta().getRad()));
+        int p = Settings.Precision;
+        if (Objects.equals(Settings.OutputAngleFormat, Angle.RADIANS)) {
+            System.out.println("hi this is debug " + x.polform.getTheta().getRad());
+            System.out.println(String.format("Magnitude: %."+p+"f, Direction: %."+p+"f radians",x.polform.getMag(),x.polform.getTheta().getRad()));
+        }
+        else {
+            System.out.println(String.format("Magnitude: %."+p+"f, Direction: %."+p+"f degrees",x.polform.getMag(),x.polform.getTheta().getDeg()));
+        }
     }
 
-    public static void printPolDeg(Vector x){
-        System.out.println(String.format("Magnitude: %.5f, Direction: %.5f degrees",x.polform.getMag(),x.polform.getTheta().getRad()));
-    }
 
     public static void print(Vector x){
         printRec(x);
-        printPolDeg(x);
+        printPol(x);
     }
 
-    public Vector scalarMult(double x){
-        Vector cur = this;
-        cur.recform = cur.recform.scalarMult(x);
-        cur.polform = cur.polform.scalarMult(x);
+    public void scalarMult(double x){
+        this.polform.scalarMult(x);
+        this.recform.scalarMult(x);
+    }
+
+    public Vector scale(double x){
+        Vector cur = new Vector(0,0,0,0);
+        cur.polform = this.polform;
+        cur.recform = this.recform;
+        cur.polform.scalarMult(x);
+        cur.recform.scalarMult(x);
         return cur;
     }
 }

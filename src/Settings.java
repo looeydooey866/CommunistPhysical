@@ -1,8 +1,8 @@
 public class Settings {
-    public static String InputAngleFormat = "rad";
-    public static String OutputAngleFormat = "deg";
+    public static String InputAngleFormat = Angle.RADIANS;
+    public static String OutputAngleFormat = Angle.DEGREES;
     public static int Precision = 5;
-    public static boolean Verbose = true;
+    public static String Style = Voicelines.Verbose;
 
     public static void setInputAngleFormat(String angleFormat) {
         InputAngleFormat = angleFormat;
@@ -16,7 +16,7 @@ public class Settings {
         Precision = precision;
     }
 
-    public static void setVerbose(boolean verbose) {
-        Verbose = verbose;
+    public static void setStyle(String style) {
+        Style = style;
     }
 }
