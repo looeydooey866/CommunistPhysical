@@ -8,6 +8,9 @@ public class Angle {
         while (this.getRad() < 0){
             this.add(Math.PI*2);
         }
+        while (this.getRad() > Math.PI * 2){
+            this.subtract(Math.PI*2);
+        }
     }
 
     public double getRad(){
@@ -47,6 +50,11 @@ public class Angle {
 
     public void add(double x){
         this.setRad(this.getRad() + x);
+        normalize();
+    }
+
+    public void subtract(double x){
+        this.setRad(this.getRad() - x);
         normalize();
     }
 }
