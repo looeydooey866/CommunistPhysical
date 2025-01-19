@@ -1,4 +1,4 @@
-# CommunistGeometry
+# CommunistPhysical (formerly CommunistGeometry)
 A program that our association uses for accurate calculations of ballistic equations.
 ## Current features: 
 ### 1. Vectors
