@@ -1,4 +1,4 @@
-# **CommunistPhysical** *(formerly CommunistGeometry)*
+# **☭CommunistPhysical☭** *(formerly CommunistGeometry)*
 
 ## **Overview**  
 CommunistPhysical is a Java-based program designed to assist our association with accurate and efficient calculations of ballistic equations. It serves as a robust tool for handling complex vector operations, making it indispensable for advanced physical and mathematical computations.
