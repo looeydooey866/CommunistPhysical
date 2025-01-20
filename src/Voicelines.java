@@ -37,7 +37,7 @@ public class Voicelines {
                     case Verbose -> "Error sire, you hath not specified a suitable vector nameth!";
                     case Normal -> "Error. Vector not found.";
                     case Silent -> "";
-                    case Communist -> "wat";
+                    case Communist -> "Error. You have disappointed comrade Stalin. You have given an unreadable and capitalist message.";
                     default -> "Unknown style.";
                 }
         );
@@ -49,7 +49,7 @@ public class Voicelines {
                     case Verbose -> "I don't know what you are talking about, sire. You said " + storingType + " and it confused me heavily.";
                     case Normal -> "Error. Storage type \"" + storingType + "\" not supported.";
                     case Silent -> "";
-                    case Communist -> "bruh";
+                    case Communist -> "Error. You have disappointed comrade Lenin. You have done the crime of storing" + storingType + ", which is highly capitalist.";
                     default -> "Unknown style.";
                 }
         );
@@ -61,7 +61,7 @@ public class Voicelines {
                     case Verbose -> "Stored " + storingName + ", sire.";
                     case Normal -> "Successfully stored " + storingName + ".";
                     case Silent -> "";
-                    case Communist -> "yeet";
+                    case Communist -> "Storing completed, comrade. May every calculation bring good to the Soviets.";
                     default -> "Unknown style.";
                 }
         );
@@ -73,7 +73,7 @@ public class Voicelines {
                     case Verbose -> "Sorry Sire, I cannot present a vector in a " + type + " type.";
                     case Normal -> "Error: Could not recognise vector format \"" + type + "\".";
                     case Silent -> "";
-                    case Communist -> "umm bro something happened.. you might wanna check it out idk";
+                    case Communist -> "Error. You have supported Trotsky by entering" + type;
                     default -> "Unknown style.";
                 }
         );
@@ -85,7 +85,7 @@ public class Voicelines {
                     case Verbose -> "It is my pleasure, Sire.";
                     case Normal -> "No problem";
                     case Silent -> "";
-                    case Communist -> "Your welcome. Here is some Vodka.";
+                    case Communist -> "You are welcome, comrade. Here, have some Vodka.";
                     default -> "Unknown style.";
                 }
         );
@@ -97,7 +97,7 @@ public class Voicelines {
                     case Verbose -> "Here are all your available vectors, Sire. Please enjoy your delectable selection.";
                     case Normal -> "Listing vectors...";
                     case Silent -> "";
-                    case Communist -> "Eeeugh.. BLUEEEEGGGHHHHHHH!!!!!!!!!! Oh man, just spat out some vectors. Sorry bout that bro.";
+                    case Communist -> "Listing all communist vectors: ";
                     default -> "Unknown style.";
                 }
         );
@@ -109,7 +109,7 @@ public class Voicelines {
                     case Verbose -> "Sorry, I perchance am not able to fully Digest your Query. Please perchance input another query! Tally ho!";
                     case Normal -> "Querytype not recognised.";
                     case Silent -> "";
-                    case Communist -> "I haven't studied for this!";
+                    case Communist -> "You have disappointed the whole of the Bolsheviks. You will now go to Gulag.";
                     default -> "Unknown style.";
                 }
         );
@@ -121,7 +121,7 @@ public class Voicelines {
                     case Verbose -> "Changed " + setting + " to " + newValue + ", sire.";
                     case Normal -> "Changed " + setting + " to " + newValue + ".";
                     case Silent -> "";
-                    case Communist -> "wow something happened such wow"+setting+newValue+setting+newValue;
+                    case Communist -> "Мы заменили" + setting + " на " + newValue + ".";
                     default -> "Unknown style.";
                 }
         );
@@ -133,7 +133,7 @@ public class Voicelines {
                     case Verbose -> "Debugging for you, sire.";
                     case Normal -> "Debugging...";
                     case Silent -> "";
-                    case Communist -> "£¢•ª†º√£¢∫†ˆº¨∑©†ß˙¨ˆø©˚∆ƒ˙∫©øˆ¨ƒ˚©∆∫®øˆß©¨˚∫ƒ≈©ªø≈ˆ¨ƒ∫ª∑†ªº∑√∑º¢†ª√º†√£º†√";
+                    case Communist -> "Обнаружение ошибок...";
                     default -> "Unknown style.";
                 }
         );
