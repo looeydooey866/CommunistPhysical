@@ -1,4 +1,2 @@
-public class Displacement{
-  private Vector()
-  
+public class Displacement extends Vector{
 }
