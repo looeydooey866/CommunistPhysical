@@ -15,6 +15,14 @@ public class Displacement extends Vector{
         super(new Rect(pF.getX()-pI.getY(), pF.getY()-pI.getY()));
     }
 
+    public Displacement(Velocity avgV, double T){
+        super(avgV.getVelocity().scalarMult(T));
+    }
+
+    public Displacement(Velocity vI, Acceleration a, double T){
+        super(vI.getVelocity().scalarMult(T));
+    }
+
     public Rect getDisp(){
         return this.recform;
     }
