@@ -21,6 +21,10 @@ public class Vector {
         this.polform = new Polar(c,d);
     }
 
+    public Vector() {
+
+    }
+
     public static Vector sum(Vector lh, Vector rh){
         Rect cur = new Rect(0,0);
         cur.setX(lh.recform.getX() + rh.recform.getX());

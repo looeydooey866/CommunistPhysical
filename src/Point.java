@@ -1,5 +1,6 @@
 public class Point {
-    private double x, y;
+    private double x;
+    private double y;
     private Rect coords;
     
     public Point(double x, double y){
@@ -19,5 +20,17 @@ public class Point {
         this.x = x;
         this.y = y;
         this.coords.setCoords(this.x, this.y);
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public Rect getCoords() {
+        return coords;
     }
 }

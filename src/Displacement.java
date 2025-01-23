@@ -11,5 +11,9 @@ public class Displacement extends Vector{
         super(x);
     }
 
+    public Displacement(Point pI, Point pF){
+        super(new Rect(pF.getX()-pI.getY(), pF.getY()-pI.getY()));
+    }
 
+    
 }
