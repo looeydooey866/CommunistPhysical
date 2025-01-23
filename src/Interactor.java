@@ -6,7 +6,7 @@ public class Interactor {
     private final HashMap<String,Vector> dataTable = new HashMap<>();
     private final Scanner Reader = new Scanner(System.in);
     private final ArrayList<String> queries = new ArrayList<>();
-    public Boolean terminated = false;
+    public Boolean terminated = (Boolean) false;
 
     public void query(){
         Voicelines.askQuery();
@@ -33,78 +33,81 @@ public class Interactor {
 
     private void terminate(){
         Voicelines.announceTermination();
-        terminated = true;
+        terminated = (Boolean) true;
     }
 
     private void store(){
         String storingType = queries.removeFirst();
         String storingName = queries.removeFirst();
-        if (storingType.equals("polar")){
-            Vector cur = new Vector(0,0,0,0);
-            cur.polform.setMag(Double.parseDouble(queries.removeFirst()));
-            cur.polform.setThetaInput(Double.parseDouble(queries.removeFirst()));
-            cur.recform = Rect.rec(cur.polform);
-            dataTable.put(storingName,cur);
-        } else if (storingType.equals("rect")){
-            Vector cur = new Vector(0,0,0,0);
-            cur.recform.setX(Double.parseDouble(queries.removeFirst()));
-            cur.recform.setY(Double.parseDouble(queries.removeFirst()));
-            cur.polform = Polar.pol(cur.recform);
-            dataTable.put(storingName,cur);
-        } else if (storingType.equals("equation")){
-            String equals = queries.removeFirst();
-            Vector cur = new Vector(0,0,0,0);
-            boolean sign = false;
-            boolean minus = false;
-            while (!queries.isEmpty()){
-                String s = queries.removeFirst();
-                if (!sign) {
-                    boolean skip = false;
-                    if (s.charAt(0) == '-') {
-                        minus ^= true;
-                        s = s.substring(1);
-                    }
+        switch (storingType) {
+            case "polar" -> {
+                Vector cur = new Vector(0, 0, 0, 0);
+                cur.polform.setMag(Double.parseDouble(queries.removeFirst()));
+                cur.polform.setThetaInput(Double.parseDouble(queries.removeFirst()));
+                cur.recform = Rect.rec(cur.polform);
+                dataTable.put(storingName, cur);
+            }
+            case "rect" -> {
+                Vector cur = new Vector(0, 0, 0, 0);
+                cur.recform.setX(Double.parseDouble(queries.removeFirst()));
+                cur.recform.setY(Double.parseDouble(queries.removeFirst()));
+                cur.polform = Polar.pol(cur.recform);
+                dataTable.put(storingName, cur);
+            }
+            case "equation" -> {
+                String equals = queries.removeFirst();
+                Vector cur = new Vector(0, 0, 0, 0);
+                boolean sign = false;
+                boolean minus = false;
+                while (!queries.isEmpty()) {
+                    String s = queries.removeFirst();
+                    if (!sign) {
+                        boolean skip = false;
+                        if (s.charAt(0) == '-') {
+                            minus ^= true;
+                            s = s.substring(1);
+                        }
 
-                    String decipart = "";
-                    while ((s.charAt(0) >= '0') && (s.charAt(0) <= '9')){
-                        decipart += s.charAt(0);
-                        s = s.substring(1);
-                    }
-                    if (s.charAt(0) == '.'){
-                        decipart += s.charAt(0);
-                        s = s.substring(1);
-                        while (s.charAt(0) >= '0' && s.charAt(0) <= '9'){
+                        String decipart = "";
+                        while ((s.charAt(0) >= '0') && (s.charAt(0) <= '9')) {
                             decipart += s.charAt(0);
                             s = s.substring(1);
                         }
-                    }
-                    double scalar = 1;
-                    if (!decipart.isEmpty()){
-                        scalar = Double.parseDouble(decipart);
-                    }
+                        if (s.charAt(0) == '.') {
+                            decipart += s.charAt(0);
+                            s = s.substring(1);
+                            while (s.charAt(0) >= '0' && s.charAt(0) <= '9') {
+                                decipart += s.charAt(0);
+                                s = s.substring(1);
+                            }
+                        }
+                        double scalar = 1;
+                        if (!decipart.isEmpty()) {
+                            scalar = Double.parseDouble(decipart);
+                        }
 
-                    if (s.isEmpty()){
-                        Voicelines.errorBadName();
-                        return;
-                    }
+                        if (s.isEmpty()) {
+                            Voicelines.errorBadName();
+                            return;
+                        }
 
-                    if (!minus) {
-                        cur.add(dataTable.get(s).scale(scalar));
+                        if (!minus) {
+                            cur.add(dataTable.get(s).scale(scalar));
+                        } else {
+                            cur.subtract(dataTable.get(s).scale(scalar));
+                        }
+                        minus = false;
+                    } else {
+                        minus = (s.equals("-"));
                     }
-                    else {
-                        cur.subtract(dataTable.get(s).scale(scalar));
-                    }
-                    minus = false;
+                    sign ^= true;
                 }
-                else {
-                    minus = (s.equals("-"));
-                }
-                sign ^= true;
+                dataTable.put(storingName, cur);
             }
-            dataTable.put(storingName,cur);
-        } else {
-            Voicelines.errorStorageType(storingType);
-            return;
+            default -> {
+                Voicelines.errorStorageType(storingType);
+                return;
+            }
         }
 
         Voicelines.stored(storingName);
