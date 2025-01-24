@@ -19,7 +19,7 @@ public class Displacement extends Vector{
         super(avgV.getVelocity().scalarMult(T));
     }
 
-    
+
 
     public Rect getDisp(){
         return this.recform;
