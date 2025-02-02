@@ -22,11 +22,12 @@ public class Interactor {
         switch(queryType){
             case "terminate" -> terminate();
             case "list" -> list();
-            case "store" -> store();
+            case "new" -> store();
             case "retrieve" -> retrieve();
             case "thanks" -> thank();
             case "set" -> set();
             case "debug" -> debug();
+            case "calculate" -> calc()
             default -> unknownQuery();
         }
     }
@@ -111,6 +112,10 @@ public class Interactor {
         }
 
         Voicelines.stored(storingName);
+    }
+    
+    private void calc(){
+        //calculations for velocity and acceleration goes here
     }
 
     private void retrieve(){
