@@ -27,7 +27,7 @@ public class Interactor {
             case "thanks" -> thank();
             case "set" -> set();
             case "debug" -> debug();
-            case "calculate" -> calc()
+            case "calculate" -> calc();
             default -> unknownQuery();
         }
     }
