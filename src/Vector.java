@@ -59,18 +59,15 @@ public class Vector {
     }
 
     public static void printRec(Vector x){
-        int p = Settings.Precision;
-        System.out.println(String.format("X: %."+p+"f, Y: %."+p+"f",x.recform.getX(),x.recform.getY()));
+        System.out.printf("X: %s, Y: %s\n",Settings.df.format(x.recform.getX()),Settings.df.format(x.recform.getY()));
     }
 
     public static void printPol(Vector x){
-        int p = Settings.Precision;
         if (Objects.equals(Settings.OutputAngleFormat, Angle.RADIANS)) {
-            System.out.println("hi this is debug " + x.polform.getTheta().getRad());
-            System.out.println(String.format("Magnitude: %."+p+"f, Direction: %."+p+"f radians",x.polform.getMag(),x.polform.getTheta().getRad()));
+            System.out.printf("Magnitude: %s, Direction: %s radians\n",Settings.df.format(x.polform.getMag()),Settings.df.format(x.polform.getTheta().getRad()));
         }
         else {
-            System.out.println(String.format("Magnitude: %."+p+"f, Direction: %."+p+"f degrees",x.polform.getMag(),x.polform.getTheta().getDeg()));
+            System.out.printf("Magnitude: %s, Direction: %s degrees\n",Settings.df.format(x.polform.getMag()),Settings.df.format(x.polform.getTheta().getDeg()));
         }
     }
 

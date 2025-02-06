@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-// setting class (input, output in radians or degrees)
+
 public class Interactor {
     private final HashMap<String,Vector> dataTable = new HashMap<>();
     private final Scanner Reader = new Scanner(System.in);

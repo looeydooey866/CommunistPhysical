@@ -1,8 +1,10 @@
+import java.text.DecimalFormat;
+
 public class Settings {
     public static String InputAngleFormat = Angle.RADIANS;
     public static String OutputAngleFormat = Angle.DEGREES;
-    public static int Precision = 5;
     public static String Style = Voicelines.Verbose;
+    public static DecimalFormat df = new DecimalFormat("0.00000");
 
     public static void setInputAngleFormat(String angleFormat) {
         InputAngleFormat = angleFormat;
@@ -13,7 +15,7 @@ public class Settings {
     }
 
     public static void setPrecision(int precision) {
-        Precision = precision;
+        df.setMaximumFractionDigits(precision);
     }
 
     public static void setStyle(String style) {

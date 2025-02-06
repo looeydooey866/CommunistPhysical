@@ -22,22 +22,22 @@ public class Angle {
     }
     public void setRad(double val){
         this.rad = val;
-        normalize();
+        this.normalize();
     }
 
     public void setDeg(double val){
         this.rad = val / (180 / Math.PI);
-        normalize();
+        this.normalize();
     }
     
     public Angle(Polar polska){
         this.rad = polska.getTheta().getRad();
-        normalize();
+        this.normalize();
     }
 
     public Angle(double x){
         this.rad = x;
-        normalize();
+        this.normalize();
     }
 
     public static double convertToRad(double x){
@@ -50,11 +50,11 @@ public class Angle {
 
     public void add(double x){
         this.setRad(this.getRad() + x);
-        normalize();
+        this.normalize();
     }
 
     public void subtract(double x){
         this.setRad(this.getRad() - x);
-        normalize();
+        this.normalize();
     }
 }

@@ -49,7 +49,7 @@ public class Voicelines {
                     case Verbose -> "I don't know what you are talking about, sire. You said " + storingType + " and it confused me heavily.";
                     case Normal -> "Error. Storage type \"" + storingType + "\" not supported.";
                     case Silent -> "";
-                    case Communist -> "Error. You have disappointed comrade Lenin. You have done the crime of storing" + storingType + ", which is highly capitalist.";
+                    case Communist -> "Error. You have disappointed comrade Lenin. You have done the crime of storing " + storingType + ", which is highly capitalist.";
                     default -> "Unknown style.";
                 }
         );
@@ -73,7 +73,7 @@ public class Voicelines {
                     case Verbose -> "Sorry Sire, I cannot present a vector in a " + type + " type.";
                     case Normal -> "Error: Could not recognise vector format \"" + type + "\".";
                     case Silent -> "";
-                    case Communist -> "Error. You have supported Trotsky by entering" + type;
+                    case Communist -> "Error. You have supported Trotsky by entering " + type;
                     default -> "Unknown style.";
                 }
         );
@@ -121,7 +121,7 @@ public class Voicelines {
                     case Verbose -> "Changed " + setting + " to " + newValue + ", sire.";
                     case Normal -> "Changed " + setting + " to " + newValue + ".";
                     case Silent -> "";
-                    case Communist -> "Мы заменили" + setting + " на " + newValue + ".";
+                    case Communist -> "Мы заменили " + setting + " на " + newValue + ".";
                     default -> "Unknown style.";
                 }
         );
