@@ -14,4 +14,8 @@ public class Velocity extends Vector{
     public Velocity(Displacement d, double T){
         super(d.getDisp().scalarMult(1/T));
     }
+
+    public Rect getVelocity(){
+        return this.recform;
+    }
 }

@@ -52,6 +52,7 @@ public class Rect {
         this.setY(this.getY() - other.getY());
     }
 
+
     public Rect scalarMult(double x){
         Rect cur = this;
         cur.setX(this.getX() * x);
