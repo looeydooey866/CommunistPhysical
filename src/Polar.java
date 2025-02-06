@@ -58,7 +58,25 @@ public class Polar {
     public static Polar pol(Rect x){
         Polar cur = new Polar(0,0);
         cur.mag = x.getMagnitude();
-        cur.theta.setRad(atan(x.getY() / x.getX()));
+        double theta = atan(abs(x.getY())/abs(x.getX()));
+        double res;
+        if (x.getY() >= 0){
+            if (x.getX() >= 0){//quadrant 1
+                res = theta;
+            }
+            else {//quadrant 2
+                res = Math.PI - theta;
+            }
+        }
+        else {
+            if (x.getX() <= 0){//quadrant 3
+                res = Math.PI + theta;
+            }
+            else {//quadrant 4
+                res = Math.PI*2-theta;
+            }
+        }
+        cur.theta.setRad(res);
         return cur;
     }
 

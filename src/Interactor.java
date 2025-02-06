@@ -28,13 +28,14 @@ public class Interactor {
             case "set" -> set();
             case "debug" -> debug();
             case "calculate" -> calc();
+            case "desmos" -> desmos();
             default -> unknownQuery();
         }
     }
 
     private void terminate(){
         Voicelines.announceTermination();
-        terminated = (Boolean) true;
+        terminated = true;
     }
 
     private void store(){
@@ -116,6 +117,21 @@ public class Interactor {
     
     private void calc(){
         //calculations for velocity and acceleration goes here
+    }
+
+    private void desmos(){
+        StringBuilder output = new StringBuilder();
+        for (String query : queries) {
+            if (!dataTable.containsKey(query)) {
+                Voicelines.errorNonexistentVector(query);
+                continue;
+            }
+            Vector cur = dataTable.get(query);
+            double d = cur.polform.getTheta().getRad(), a = Math.PI / 4 - d, r = cur.polform.getMag();
+            output.append(String.format("y\\cos %f+x\\sin %f=\\left(x\\cos %f-y\\sin %f\\right)\\left\\{y\\%ce0\\right\\}\\left\\{x^{2}+y^{2}\\le%f^{2}\\right\\}\n", a, a, a, a, (d <= Math.PI ? 'g' : 'l'), r));
+        }
+        Voicelines.desmos();
+        System.out.println(output);
     }
 
     private void retrieve(){

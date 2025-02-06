@@ -138,4 +138,28 @@ public class Voicelines {
                 }
         );
     }
+
+    public static void errorNonexistentVector(String name){
+        System.out.println(
+                switch(Settings.Style){
+                    case Verbose -> "My apologies sire, I do not remember seeing a vector called \"" + name + "\"!";
+                    case Normal -> "Error: Vector \"" + name + "\" not found.";
+                    case Silent -> "";
+                    case Communist -> "Vodka!"; // someone add a voiceline here
+                    default -> "Unknown style.";
+                }
+        );
+    }
+
+    public static void desmos(){
+        System.out.println(
+                switch(Settings.Style){
+                    case Verbose -> "Here you are sire, your beautiful Desmosified vectors!";
+                    case Normal -> "Printing desmos equations...";
+                    case Silent -> "";
+                    case Communist -> "Add these communist vectors to Desmos, comrade! Go on!";
+                    default -> "Unknown style.";
+                }
+        );
+    }
 }
