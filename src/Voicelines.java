@@ -145,7 +145,7 @@ public class Voicelines {
                     case Verbose -> "My apologies sire, I do not remember seeing a vector called \"" + name + "\"!";
                     case Normal -> "Error: Vector \"" + name + "\" not found.";
                     case Silent -> "";
-                    case Communist -> "Vodka!"; // someone add a voiceline here
+                    case Communist -> "You hav disappointed Comrade Karl Marx by entering a capitalist pig vector.\nNext Station: Death Camp"; // someone add a voiceline here
                     default -> "Unknown style.";
                 }
         );
@@ -154,7 +154,7 @@ public class Voicelines {
     public static void desmos(){
         System.out.println(
                 switch(Settings.Style){
-                    case Verbose -> "Here you are sire, your beautiful Desmosified vectors!";
+                    case Verbose -> "Here you are sire, your beautiful Desmosified vectors! (add your own labels)";
                     case Normal -> "Printing desmos equations...";
                     case Silent -> "";
                     case Communist -> "Add these communist vectors to Desmos, comrade! Go on!";
