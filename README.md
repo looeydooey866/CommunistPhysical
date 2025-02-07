@@ -11,6 +11,7 @@ CommunistPhysical is a Java-based program designed to assist our association wit
    - **Vector Addition and Subtraction**: Perform precise calculations for combining or resolving vectors.
    - **Vector Equations**: Supports operations such as scalar-vector multiplication for advanced equation handling.
    - **Coordinate Conversion**: Seamlessly convert between polar and rectangular coordinate systems.
+   - **Desmos Visualisation Compatibility**: Beautifully convert your vectors into equations that can be plugged in to Desmos for viewing!
 
 ---
 
