@@ -7,6 +7,7 @@ public class Interactor {
     private final Scanner Reader = new Scanner(System.in);
     private final ArrayList<String> queries = new ArrayList<>();
     public Boolean terminated = (Boolean) false;
+    private final HashMap<String,String> aliases = new HashMap<>();
 
     public void query(){
         Voicelines.askQuery();
@@ -15,10 +16,16 @@ public class Interactor {
     public void acceptQuery(){
         Scanner Parser = new Scanner(Reader.nextLine());
         queries.clear();
+
         while (Parser.hasNext()){
             queries.add(Parser.next());
         }
+
         String queryType = queries.removeFirst();
+        while (aliases.containsKey(queryType)) { //take care of alias of alias
+            queryType = aliases.get(queryType);
+        }
+
         switch(queryType){
             case "terminate" -> terminate();
             case "list" -> list();
@@ -29,6 +36,8 @@ public class Interactor {
             case "debug" -> debug();
             case "calculate" -> calc();
             case "desmos" -> desmos();
+            case "alias" -> alias();
+            case "unalias" -> unalias();
             default -> unknownQuery();
         }
     }
@@ -173,6 +182,19 @@ public class Interactor {
         int precision = Integer.parseInt(queries.removeFirst());
         Settings.setPrecision(precision);
         Voicelines.changeSetting("precision",Integer.toString(precision));
+    }
+
+    private void alias(){
+        String newalias = queries.removeFirst();
+        String to = queries.removeFirst();
+        aliases.put(newalias,to);
+    }
+
+    private void unalias(){
+        String removal = queries.removeFirst();
+        if (aliases.containsKey(removal)) {
+            queries.remove(removal);
+        }
     }
 
     private void changeStyle(){
