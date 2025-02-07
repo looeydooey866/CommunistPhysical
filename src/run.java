@@ -14,17 +14,17 @@ public class run{
                                            ######################################
 
 
-store coord [name] [x] [y]
+new coord [name] [x] [y]
     -> Stores the coordinate values {x,y} in the variable [name] in the storage.
 
-store polar [name] [mag] [deg] [deg/rad]
+new polar [name] [mag] [deg] [deg/rad]
     -> Stores the polar coordinate values {mag,deg} in the variable [name] in the storage, in either degree or radian units.
 
-store equation [equation] (e.g. "store equation a = b + c")
+new equation [equation] (e.g. "store equation a = b + c")
     -> Stores the result of the equation in the variable [name] in the storage.
     -> Supports -[vector name] and + and - operations. (e.g. "a = -b + c - -c") [Vector names and signs must be space-separated!]
 
-retrieve [name] coord
+retrieve [name] rect
     -> Prints out the coordinate values of stored variable [name].
 
 retrieve [name] polar [deg/rad]
