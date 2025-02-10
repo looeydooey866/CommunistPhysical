@@ -1,12 +1,14 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.random.*;
 
 public class Interactor {
     private final HashMap<String,Vector> dataTable = new HashMap<>();
     private final Scanner Reader = new Scanner(System.in);
     private final ArrayList<String> queries = new ArrayList<>();
-    public Boolean terminated = (Boolean) false;
+    public boolean terminated = false;
     private final HashMap<String,String> aliases = new HashMap<>();
 
     public void query(){
@@ -38,6 +40,7 @@ public class Interactor {
             case "desmos" -> desmos();
             case "alias" -> alias();
             case "unalias" -> unalias();
+            case "pyplot" -> pyplot();
             default -> unknownQuery();
         }
     }
@@ -141,6 +144,45 @@ public class Interactor {
             output.append(String.format("V_{%s}=\\ \\left(%s\\cos %s,%s\\sin %s\\right)\n",query,r,d,r,d));
         }
         Voicelines.desmos();
+        System.out.println(output);
+    }
+
+    private void pyplot(){
+        StringBuilder output = new StringBuilder();
+        output.append("import random\n" +
+                "from matplotlib.patches import FancyArrowPatch, ArrowStyle\n" +
+                "import matplotlib.pyplot as plt\n" +
+                "fig, ax = plt.subplots()\n" +
+                "style = ArrowStyle(\"-|>\", head_length=1, head_width=0.5)\n");
+        Random rand = new Random();
+        for (String query : queries){
+            if (!dataTable.containsKey(query)){
+                Voicelines.errorNonexistentVector(query);
+                continue;
+            }
+
+            Vector cur = dataTable.get(query);
+            double x = cur.recform.getX(), y = cur.recform.getY();
+            output.append("color = [random.random(),random.random(),random.random()]\n");
+            output.append(String.format("arrow = FancyArrowPatch((0, 0), (%f, %f), mutation_scale=10, arrowstyle=style, color=color, label=\"%s\")\n"
+            ,x,y,query));
+            output.append("ax.add_patch(arrow)\n");
+            output.append(String.format("plt.text(%f, %f, '%s', fontsize=12, color=color, ha='%s', va='%s')\n",x,y,query,(x>=0?"left":"right"),(y>=0?"bottom":"top")));
+        }
+        output.append("plt.axhline(0, color='black')\n" +
+                "plt.axvline(0, color='black')\n" +
+                "plt.xlabel('x')\n" +
+                "plt.ylabel('y')\n" +
+                "ax.set_aspect('equal', adjustable='box')\n" +
+                "ax.autoscale_view()\n" +
+                "plt.text(0, 0, \"0\", horizontalalignment='left', wrap=True)\n" +
+                "plt.title('Free body diagram of several forces')\n" +
+                "yabs_max = abs(max(ax.get_ylim(), key=abs))\n" +
+                "ax.set_ylim(ymin=-yabs_max, ymax=yabs_max)\n" +
+                "xabs_max = abs(max(ax.get_xlim(), key=abs))\n" +
+                "ax.set_xlim(xmin=-xabs_max, xmax=xabs_max)\n" +
+                "#plt.grid(True) #Uncomment to add a grid\n" +
+                "plt.show()\n");
         System.out.println(output);
     }
 
