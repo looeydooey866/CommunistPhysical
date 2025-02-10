@@ -53,15 +53,15 @@ public class Interactor {
         switch (storingType) {
             case "polar" -> {
                 Vector cur = new Vector(0, 0, 0, 0);
-                cur.polform.setMag(Double.parseDouble(queries.removeFirst()));
-                cur.polform.setThetaInput(Double.parseDouble(queries.removeFirst()));
+                cur.polform.setMag(RPNEngine.evaluate(queries.removeFirst()));
+                cur.polform.setThetaInput(RPNEngine.evaluate(queries.removeFirst()));
                 cur.recform = Rect.rec(cur.polform);
                 dataTable.put(storingName, cur);
             }
             case "rect" -> {
                 Vector cur = new Vector(0, 0, 0, 0);
-                cur.recform.setX(Double.parseDouble(queries.removeFirst()));
-                cur.recform.setY(Double.parseDouble(queries.removeFirst()));
+                cur.recform.setX(RPNEngine.evaluate(queries.removeFirst()));
+                cur.recform.setY(RPNEngine.evaluate(queries.removeFirst()));
                 cur.polform = Polar.pol(cur.recform);
                 dataTable.put(storingName, cur);
             }
@@ -187,7 +187,6 @@ public class Interactor {
     private void alias(){
         String newalias = queries.removeFirst();
         String to = queries.removeFirst();
-        aliases.put(newalias,to);
     }
 
     private void unalias(){

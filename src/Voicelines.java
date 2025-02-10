@@ -162,4 +162,16 @@ public class Voicelines {
                 }
         );
     }
+
+    public static void RPNconversionError(){
+        System.out.println(
+                switch(Settings.Style){
+                    case Verbose -> "Here you are sire, your beautiful Desmosified vectors! (add your own labels)";
+                    case Normal -> "Printing desmos equations...";
+                    case Silent -> "";
+                    case Communist -> "Add these communist vectors to Desmos, comrade! Go on!";
+                    default -> "Unknown style.";
+                }
+        );
+    }
 }
