@@ -148,9 +148,10 @@ public class Interactor {
     }
 
     private void pyplot() throws Exception { // pyplot a b as amogus
-        String pythonFileName = "src/grapher.py";
+        String pythonFileName = String.format("src%sgrapher.py",Settings.OSPathDelimiter);
 
         ArrayList<String> args = new ArrayList<>();
+        args.add(Settings.OSPathDelimiter);
         int n = queries.size();
         boolean defaultname = true;
         if (queries.size() >= 2){
@@ -185,8 +186,8 @@ public class Interactor {
             System.out.println(line);
         }
         int exitCode = proc.waitFor();
-        if (exitCode == 0){ //need some voicelines for this
-            Voicelines.pyplot();
+        if (exitCode == 0){
+            Voicelines.pyplot((defaultname?null:queries.get(n-1)));
         }
         else {
             Voicelines.pyplotError(exitCode);
@@ -224,6 +225,7 @@ public class Interactor {
             case "style" -> changeStyle();
             case "inputangleformat" -> changeInputAngleFormat();
             case "outputangleformat" -> changeOutputAngleFormat();
+            case "ospathdelimiter" -> changeOSPathDelimiter();
         }
     }
 
@@ -231,6 +233,12 @@ public class Interactor {
         int precision = Integer.parseInt(queries.removeFirst());
         Settings.setPrecision(precision);
         Voicelines.changeSetting("precision",Integer.toString(precision));
+    }
+
+    private void changeOSPathDelimiter(){
+        String delim = queries.removeFirst();
+        Settings.setOSPathDelimiter(delim);
+        Voicelines.changeSetting("ospathdelimiter",delim);
     }
 
     private void alias(){
