@@ -1,7 +1,7 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 import java.util.random.*;
 
 public class Interactor {
@@ -15,7 +15,7 @@ public class Interactor {
         Voicelines.askQuery();
     }
 
-    public void acceptQuery(){
+    public void acceptQuery() throws IOException, InterruptedException {
         Scanner Parser = new Scanner(Reader.nextLine());
         queries.clear();
 
@@ -147,43 +147,48 @@ public class Interactor {
         System.out.println(output);
     }
 
-    private void pyplot(){
-        StringBuilder output = new StringBuilder();
-        output.append("import random\n" +
-                "from matplotlib.patches import FancyArrowPatch, ArrowStyle\n" +
-                "import matplotlib.pyplot as plt\n" +
-                "fig, ax = plt.subplots()\n" +
-                "style = ArrowStyle(\"-|>\", head_length=1, head_width=0.5)\n");
-        Random rand = new Random();
-        for (String query : queries){
-            if (!dataTable.containsKey(query)){
-                Voicelines.errorNonexistentVector(query);
-                continue;
-            }
+    private void pyplot() throws IOException, InterruptedException { // pyplot a b as amogus
+        String pythonFileName = "src/grapher.py";
 
-            Vector cur = dataTable.get(query);
-            double x = cur.recform.getX(), y = cur.recform.getY();
-            output.append("color = [random.random(),random.random(),random.random()]\n");
-            output.append(String.format("arrow = FancyArrowPatch((0, 0), (%f, %f), mutation_scale=10, arrowstyle=style, color=color, label=\"%s\")\n"
-            ,x,y,query));
-            output.append("ax.add_patch(arrow)\n");
-            output.append(String.format("plt.text(%f, %f, '%s', fontsize=12, color=color, ha='%s', va='%s')\n",x,y,query,(x>=0?"left":"right"),(y>=0?"bottom":"top")));
+        ArrayList<String> args = new ArrayList<>();
+        int n = queries.size();
+        if (queries.size() >= 2){
+            if (Objects.equals(queries.get(n - 2), "as")){
+                for (int i=0;i<n-2;i++){
+                    String query = queries.get(i);
+                    args.add(query);
+                    args.add(String.valueOf(dataTable.get(query).recform.getX()));
+                    args.add(String.valueOf(dataTable.get(query).recform.getY()));
+                }
+                args.add(queries.get(n-1));
+            }
         }
-        output.append("plt.axhline(0, color='black')\n" +
-                "plt.axvline(0, color='black')\n" +
-                "plt.xlabel('x')\n" +
-                "plt.ylabel('y')\n" +
-                "ax.set_aspect('equal', adjustable='box')\n" +
-                "ax.autoscale_view()\n" +
-                "plt.text(0, 0, \"0\", horizontalalignment='left', wrap=True)\n" +
-                "plt.title('Free body diagram of several forces')\n" +
-                "yabs_max = abs(max(ax.get_ylim(), key=abs))\n" +
-                "ax.set_ylim(ymin=-yabs_max, ymax=yabs_max)\n" +
-                "xabs_max = abs(max(ax.get_xlim(), key=abs))\n" +
-                "ax.set_xlim(xmin=-xabs_max, xmax=xabs_max)\n" +
-                "#plt.grid(True) #Uncomment to add a grid\n" +
-                "plt.show()\n");
-        System.out.println(output);
+
+        else {
+            for (int i=0;i<n;i++){
+                String query = queries.get(i);
+                args.add(query);
+                args.add(String.valueOf(dataTable.get(query).recform.getX()));
+                args.add(String.valueOf(dataTable.get(query).recform.getY()));
+            }
+        }
+
+        ProcessBuilder p = new ProcessBuilder("python3",pythonFileName);
+        p.command().addAll(args);
+        p.redirectErrorStream(true);
+        Process proc = p.start();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+        }
+        int exitCode = proc.waitFor();
+        if (exitCode == 0){ //need some voicelines for this
+            System.out.println("Python script successfully executed. Image stored in folder 'plots'.");
+        }
+        else {
+            System.out.println("Uh oh, Python grapher exited with code: " + exitCode);
+        }
     }
 
     private void retrieve(){
