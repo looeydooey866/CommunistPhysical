@@ -1,10 +1,14 @@
 public class run{
     public static void main(String[] args){
-
         Interactor x = new Interactor();
         while (!x.terminated){
             x.query();
-            x.acceptQuery();
+            try{
+                x.acceptQuery();
+            }
+            catch(Exception e){
+                System.out.println("what happened bro i caught " + e);
+            }
         }
     }
 } /*
