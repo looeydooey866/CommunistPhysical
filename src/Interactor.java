@@ -152,8 +152,10 @@ public class Interactor {
 
         ArrayList<String> args = new ArrayList<>();
         int n = queries.size();
+        boolean defaultname = true;
         if (queries.size() >= 2){
             if (Objects.equals(queries.get(n - 2), "as")){
+                defaultname = false;
                 for (int i=0;i<n-2;i++){
                     String query = queries.get(i);
                     args.add(query);
@@ -164,7 +166,7 @@ public class Interactor {
             }
         }
 
-        else {
+        if (defaultname){
             for (int i=0;i<n;i++){
                 String query = queries.get(i);
                 args.add(query);

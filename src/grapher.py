@@ -7,7 +7,7 @@ now = datetime.now()
 from matplotlib.patches import FancyArrowPatch, ArrowStyle
 import matplotlib.pyplot as plt
 from PIL import Image
-n = len(sys.argv)//3
+n = (len(sys.argv)-1)//3
 fig, ax = plt.subplots()
 style = ArrowStyle("-|>", head_length=1, head_width=0.5)
 counter = 1
@@ -35,8 +35,9 @@ for i in range(n):
     plt.text(x,y,name, fontsize=12, color=color, ha=a, va=b)
 
 name=now.strftime("vectors_%d-%m-%y_%H:%M:%S")
-if n*3!=len(sys.argv):
+if (len(sys.argv)-1)%3!=0:
     name=sys.argv[counter]
+    counter = counter + 1
 
 
 plt.axhline(0, color='black')
@@ -53,3 +54,4 @@ xabs_max = abs(max(ax.get_xlim(), key=abs))
 ax.set_xlim(xmin=-xabs_max, xmax=xabs_max)
 #plt.grid(True) #Uncomment to add a grid
 plt.savefig("src/plots/"+name,dpi=1200)
+sys.exit()
