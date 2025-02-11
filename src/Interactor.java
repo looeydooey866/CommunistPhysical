@@ -15,7 +15,7 @@ public class Interactor {
         Voicelines.askQuery();
     }
 
-    public void acceptQuery() throws IOException, InterruptedException {
+    public void acceptQuery() throws Exception{
         Scanner Parser = new Scanner(Reader.nextLine());
         queries.clear();
 
@@ -147,7 +147,7 @@ public class Interactor {
         System.out.println(output);
     }
 
-    private void pyplot() throws IOException, InterruptedException { // pyplot a b as amogus
+    private void pyplot() throws Exception { // pyplot a b as amogus
         String pythonFileName = "src/grapher.py";
 
         ArrayList<String> args = new ArrayList<>();
@@ -186,10 +186,10 @@ public class Interactor {
         }
         int exitCode = proc.waitFor();
         if (exitCode == 0){ //need some voicelines for this
-            System.out.println("Python script successfully executed. Image stored in folder 'plots'.");
+            Voicelines.pyplot();
         }
         else {
-            System.out.println("Uh oh, Python grapher exited with code: " + exitCode);
+            Voicelines.pyplotError(exitCode);
         }
     }
 

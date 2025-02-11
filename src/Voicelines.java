@@ -178,10 +178,22 @@ public class Voicelines {
     public static void pyplot(){
         System.out.println(
                 switch(Settings.Style){ //a bit copied, feel free to change
-                    case Verbose -> "Here you are sire, your beautiful MatPlotLibbified vectors! (Paste this program into a python file. Make sure to have matplotlib installed.)";
-                    case Normal -> "Printing matplotlib equations...";
+                    case Verbose -> "idk";
+                    case Normal -> "Python script successfully executed. Image stored in folder 'plots'.";
                     case Silent -> "";
-                    case Communist -> "Add these communist vectors to Python, comrade! Go on!";
+                    case Communist -> "vodka.";
+                    default -> "Unknown style.";
+                }
+        );
+    }
+
+    public static void pyplotError(int x){
+        System.out.println(
+                switch(Settings.Style){ //a bit copied, feel free to change
+                    case Verbose -> "idk";
+                    case Normal -> "what did bro do";
+                    case Silent -> "";
+                    case Communist -> "do NOT let bro cook again";
                     default -> "Unknown style.";
                 }
         );
