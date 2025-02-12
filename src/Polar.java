@@ -37,6 +37,11 @@ public class Polar {
         this.theta.setRad(b);
     }
 
+    public Polar(Polar p){
+        this.mag = p.mag;
+        this.theta.setRad(p.theta.getRad());
+    }
+
     public void addWith(Polar other){
         Rect cur = Rect.rec(this);
         Rect add = Rect.rec(other);
