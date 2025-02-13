@@ -197,13 +197,23 @@ public class Interactor {
     }
 
     private void retrieve(){
-        String name = Parser.next();
-        String type = Parser.next();
-        switch(type){
-            case "polar" -> Vector.printPol(dataTable.get(name));
-            case "rect" ->  Vector.printRec(dataTable.get(name));
-            case "both" ->  Vector.print(dataTable.get(name));
-            default -> Voicelines.retrievalTypeError(type);
+        String quer = Parser.nextLine().trim();
+        ArrayList<String> queries = new ArrayList<>();
+        if (quer.charAt(0) != '['){
+            queries.add(quer);
+        }
+        else {
+            Scanner myScan = new Scanner(quer.substring(1,quer.length()-1));
+            myScan.useDelimiter(",");
+            while (myScan.hasNext()){
+                queries.add(myScan.next().trim());
+            }
+            myScan.close();
+        }
+
+        for (String s : queries){
+            System.out.println("======= Vector " + s + " =======");
+            Vector.print(dataTable.get(s));
         }
     }
 
