@@ -123,49 +123,62 @@ public class Interactor {
     }
 
     private void pyplot() throws Exception { // please rehaul
-//        String pythonFileName = "src/grapher.py";
-//
-//        ArrayList<String> args = new ArrayList<>();
-//        int n = queries.size();
-//        boolean defaultname = true;
-//        if (queries.size() >= 2){
-//            if (Objects.equals(queries.get(n - 2), "as")){
-//                defaultname = false;
-//                for (int i=0;i<n-2;i++){
-//                    String query = queries.get(i);
-//                    args.add(query);
-//                    args.add(String.valueOf(dataTable.get(query).recform.getX()));
-//                    args.add(String.valueOf(dataTable.get(query).recform.getY()));
-//                }
-//                args.add(queries.get(n-1));
-//            }
-//        }
-//
-//        if (defaultname){
-//            for (int i=0;i<n;i++){
-//                String query = queries.get(i);
-//                args.add(query);
-//                args.add(String.valueOf(dataTable.get(query).recform.getX()));
-//                args.add(String.valueOf(dataTable.get(query).recform.getY()));
-//            }
-//        }
-//
-//        ProcessBuilder p = new ProcessBuilder("python3",pythonFileName);
-//        p.command().addAll(args);
-//        p.redirectErrorStream(true);
-//        Process proc = p.start();
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-//        String line;
-//        while ((line = reader.readLine()) != null) {
-//            System.out.println(line);
-//        }
-//        int exitCode = proc.waitFor();
-//        if (exitCode == 0){ //need some voicelines for this
-//            Voicelines.pyplot();
-//        }
-//        else {
-//            Voicelines.pyplotError(exitCode);
-//        }
+        String pythonFileName = "src/grapher.py";
+
+        ArrayList<String> args = new ArrayList<>();
+        ArrayList<String> names = new ArrayList<>();
+        boolean usename = false;
+        String name = null;
+        {
+            Scanner takeNames = new Scanner(Parser.nextLine());
+            takeNames.useDelimiter("->");
+            String current = takeNames.next().trim();
+            if (takeNames.hasNext()){
+                usename = true;
+                name = takeNames.next().trim();
+            }
+            takeNames.close();
+            {
+                current = current.trim();
+                if (current.charAt(0) != '['){
+                    names.add(current);
+                }
+                else {
+                    Scanner scn = new Scanner(current.substring(1,current.length()-1));
+                    scn.useDelimiter(",");
+                    while (scn.hasNext()){
+                        names.add(scn.next().trim());
+                    }
+                    scn.close();
+                }
+            }
+        }
+        for (int i=0;i<names.size();i++){
+            String query = names.get(i);
+            args.add(query);
+            args.add(String.valueOf(dataTable.get(query).recform.getX()));
+            args.add(String.valueOf(dataTable.get(query).recform.getY()));
+        }
+        if (usename){
+            args.add(name);
+        }
+
+        ProcessBuilder p = new ProcessBuilder("python3",pythonFileName);
+        p.command().addAll(args);
+        p.redirectErrorStream(true);
+        Process proc = p.start();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.err.println("Python output: " + line);
+        }
+        int exitCode = proc.waitFor();
+        if (exitCode == 0){ //need some voicelines for this
+            Voicelines.pyplot();
+        }
+        else {
+            Voicelines.pyplotError(exitCode);
+        }
     }
 
     private void retrieve(){
