@@ -129,10 +129,12 @@ public class Interactor {
         ArrayList<String> names = new ArrayList<>();
         boolean usename = false;
         String name = null;
+        String result = null;
         {
             Scanner takeNames = new Scanner(Parser.nextLine());
             takeNames.useDelimiter("->");
             String current = takeNames.next().trim();
+            result = current;
             if (takeNames.hasNext()){
                 usename = true;
                 name = takeNames.next().trim();
@@ -174,7 +176,7 @@ public class Interactor {
         }
         int exitCode = proc.waitFor();
         if (exitCode == 0){ //need some voicelines for this
-            Voicelines.pyplot();
+            Voicelines.pyplot(result);
         }
         else {
             Voicelines.pyplotError(exitCode);
