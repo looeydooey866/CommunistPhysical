@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -123,7 +124,7 @@ public class Interactor {
     }
 
     private void pyplot() throws Exception { // please rehaul
-        String pythonFileName = "src/grapher.py";
+        String pythonFileName = String.format("src%sgrapher.py", File.separator);
 
         ArrayList<String> args = new ArrayList<>();
         ArrayList<String> names = new ArrayList<>();
