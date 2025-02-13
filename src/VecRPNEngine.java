@@ -84,7 +84,6 @@ public class VecRPNEngine {
                 while (!operators.empty() &&
                         ((!unary && priority(operators.peek()) >= priority(s.charAt(i))) ||
                                 (unary && priority(operators.peek()) > priority(s.charAt(i))))
-
                 ) {
                     operate(operators.pop());
                 }
@@ -180,8 +179,13 @@ public class VecRPNEngine {
                     while (i<n&&!isSymbol(s.charAt(i))){
                         vec+=s.charAt(i++);
                     }
+                    i--;
                     if (dataTable.containsKey(vec)){
+                        System.err.println("Vector " + vec + " found");
                         vectors.push(dataTable.get(vec));
+                    }
+                    else {
+                        System.err.println("Not found: vector " + vec);
                     }
                     unary = false;
                 }

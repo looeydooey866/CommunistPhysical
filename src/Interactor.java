@@ -88,7 +88,7 @@ public class Interactor {
             Scanner myScan = new Scanner(vecnames.substring(1,vecnames.length()-1));
             myScan.useDelimiter(",");
             while (myScan.hasNext()){
-                vecs.add(myScan.next());
+                vecs.add(myScan.next().trim());
             }
             myScan.close();
         }
@@ -108,16 +108,28 @@ public class Interactor {
 
     private void desmos(){
         StringBuilder output = new StringBuilder();
-        while (Parser.hasNext()) {
-            String query = Parser.next();
-            if (!dataTable.containsKey(query)) {
-                Voicelines.errorNonexistentVector(query);
+        String qry = Parser.nextLine();
+        qry = qry.trim();
+        ArrayList<String> queries = new ArrayList<>();
+        if (qry.charAt(0) != '['){
+            queries.add(qry);
+        }
+        else {
+            Scanner myScan = new Scanner(qry.substring(1,qry.length()-1));
+            myScan.useDelimiter(",");
+            while (myScan.hasNext()){
+                queries.add(myScan.next().trim());
+            }
+        }
+        for (String s : queries) {
+            if (!dataTable.containsKey(s)) {
+                Voicelines.errorNonexistentVector(s);
                 continue;
             }
-            Vector cur = dataTable.get(query);
+            Vector cur = dataTable.get(s);
             double d = cur.polform.getTheta().getRad(), a = Math.PI / 4 - d, r = cur.polform.getMag();
             output.append(String.format("y\\cos %f+x\\sin %f=\\left(x\\cos %f-y\\sin %f\\right)\\left\\{y\\%ce0\\right\\}\\left\\{x^{2}+y^{2}\\le%f^{2}\\right\\}\n", a, a, a, a, (d <= Math.PI ? 'g' : 'l'), r));
-            output.append(String.format("V_{%s}=\\ \\left(%s\\cos %s,%s\\sin %s\\right)\n",query,r,d,r,d));
+            output.append(String.format("V_{%s}=\\ \\left(%s\\cos %s,%s\\sin %s\\right)\n",s,r,d,r,d));
         }
         Voicelines.desmos();
         System.out.println(output);
@@ -227,6 +239,7 @@ public class Interactor {
     private void alias(){
         String newalias = Parser.next();
         String to = Parser.next();
+        aliases.put(newalias,to);
     }
 
     private void unalias(){
@@ -256,50 +269,6 @@ public class Interactor {
 
     private void debug(){
         Voicelines.debug();
-    }
-
-    private void vecCalculation(){
-        Vector x = VecRPNEngine.evaluate(Parser.nextLine(),dataTable);
-        Vector.print(x);
-    }
-
-    private Vector objectifier(String s){
-        if (dataTable.containsKey(s)){
-            return dataTable.get(s);
-        }
-        else if (s.startsWith("Pol(")){
-            String mag = "";
-            String theta = "";
-            for (int i=4;i<s.length();i++){
-                if (s.charAt(i) == ','){
-                    i++;
-                    while (i < s.length()-1){
-                        theta += s.charAt(i++);
-                    }
-                    break;
-                }
-                mag += s.charAt(i);
-            }
-            return Vector.pol(RPNEngine.evaluate(mag),RPNEngine.evaluate(theta));
-        }
-        else if (s.startsWith("Rect(")){
-            String x = "";
-            String y = "";
-            for (int i=5;i<s.length();i++){
-                if (s.charAt(i) == ','){
-                    i++;
-                    while (i < s.length()-1){
-                        y += s.charAt(i++);
-                    }
-                    break;
-                }
-                x += s.charAt(i);
-            }
-            return Vector.rect(RPNEngine.evaluate(x),RPNEngine.evaluate(y));
-        }
-        else {
-            return null;
-        }
     }
 
     private void parserCharMode(boolean b){
