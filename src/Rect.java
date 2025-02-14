@@ -9,6 +9,11 @@ public class Rect {
         this.y = y;
     }
 
+    public Rect(Rect r){
+        this.x = r.x;
+        this.y = r.y;
+    }
+
     public void setX(double val){
         this.x = val;
     }

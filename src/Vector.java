@@ -7,12 +7,12 @@ public class Vector {
     Polar polform = new Polar(0,0);
 
     public Vector(Rect x) {
-        this.recform = x;
+        this.recform = new Rect(x);
         this.polform = Polar.pol(x);
     }
 
     public Vector(Polar x){
-        this.polform = x;
+        this.polform = new Polar(x);
         this.recform = Rect.rec(x);
     }
 
@@ -23,6 +23,11 @@ public class Vector {
 
     public Vector() {
 
+    }
+
+    public Vector(Vector cpy) {
+        this.recform = new Rect(cpy.recform);
+        this.polform = Polar.pol(cpy.recform);
     }
 
     public static Vector sum(Vector lh, Vector rh){
@@ -89,5 +94,23 @@ public class Vector {
         cur.polform.scalarMult(x);
         cur.recform.scalarMult(x);
         return cur;
+    }
+
+    public static Vector pol(double mag, double angle){
+        Vector res = new Vector(0,0,0,0);
+
+        res.polform.setMag(mag);
+        res.polform.setThetaInput(angle);
+        res.recform = Rect.rec(res.polform);
+        return res;
+    }
+
+    public static Vector rect(double x, double y){
+        Vector res = new Vector(0,0,0,0);
+
+        res.recform.setX(x);
+        res.recform.setY(y);
+        res.polform = Polar.pol(res.recform);
+        return res;
     }
 }

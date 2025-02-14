@@ -6,6 +6,7 @@ from math import floor
 now = datetime.now()
 from matplotlib.patches import FancyArrowPatch, ArrowStyle
 import matplotlib.pyplot as plt
+import os
 from PIL import Image
 n = (len(sys.argv)-2)//3
 fig, ax = plt.subplots()
@@ -56,6 +57,5 @@ ax.set_ylim(ymin=-yabs_max, ymax=yabs_max)
 xabs_max = abs(max(ax.get_xlim(), key=abs))
 ax.set_xlim(xmin=-xabs_max, xmax=xabs_max)
 #plt.grid(True) #Uncomment to add a grid
-plt.show()
-#plt.savefig("plots"+delim+name,dpi=1200) //for now
+plt.savefig("src"+os.sep+"plots"+os.sep+name,dpi=1200)
 sys.exit()
