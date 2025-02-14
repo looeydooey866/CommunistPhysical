@@ -11,8 +11,7 @@ from PIL import Image
 n = (len(sys.argv)-2)//3
 fig, ax = plt.subplots()
 style = ArrowStyle("-|>", head_length=1, head_width=0.5)
-delim = sys.argv[1]
-counter = 2
+counter = 1
 
 plt.axhline(0, color='black')
 plt.axvline(0, color='black')
@@ -40,7 +39,7 @@ for i in range(n):
     plt.text(x,y,name, fontsize=12, color=color, ha=a, va=b)
 
 name=now.strftime("vectors_%d-%m-%y_%H:%M:%S")
-if (len(sys.argv)-2)%3!=0:
+if (len(sys.argv)-1)%3!=0:
     name=sys.argv[counter]
     counter = counter + 1
 
@@ -57,5 +56,6 @@ ax.set_ylim(ymin=-yabs_max, ymax=yabs_max)
 xabs_max = abs(max(ax.get_xlim(), key=abs))
 ax.set_xlim(xmin=-xabs_max, xmax=xabs_max)
 #plt.grid(True) #Uncomment to add a grid
+print("filename and path: src"+os.sep+"plots"+os.sep+name)
 plt.savefig("src"+os.sep+"plots"+os.sep+name,dpi=1200)
 sys.exit()

@@ -178,6 +178,7 @@ public class Interactor {
         if (usename){
             args.add(name);
         }
+        // size - 2, if size - 1 divisible by 3
 
         ProcessBuilder p = new ProcessBuilder("python3",pythonFileName);
         p.command().addAll(args);
@@ -201,7 +202,7 @@ public class Interactor {
         String quer = Parser.nextLine().trim();
         ArrayList<String> queries = new ArrayList<>();
         if (quer.charAt(0) != '['){
-            queries.add(quer);
+            queries.add(quer.trim());
         }
         else {
             Scanner myScan = new Scanner(quer.substring(1,quer.length()-1));
@@ -214,6 +215,7 @@ public class Interactor {
 
         for (String s : queries){
             System.out.println("======= Vector " + s + " =======");
+            assert(dataTable.containsKey(s));
             Vector.print(dataTable.get(s));
         }
     }
@@ -249,7 +251,7 @@ public class Interactor {
     }
 
     private void changeOSPathDelimiter(){
-        String delim = queries.removeFirst();
+        String delim = Parser.next();
         Settings.setOSPathDelimiter(delim);
         Voicelines.changeSetting("ospathdelimiter",delim);
     }
