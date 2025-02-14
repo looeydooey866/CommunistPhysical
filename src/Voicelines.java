@@ -178,14 +178,14 @@ public class Voicelines {
     public static void pyplot(String name){
         System.out.println(
                 String.format(
-                        switch(Settings.Style){ //a bit copied, feel free to change
-                            case Verbose -> "The script hath been executed, my Sire! Please enjoy \"%s\" over in the 'plots' folder!";
-                            case Normal -> "Python script successfully executed. Image \"%s\" stored in folder 'plots'.";
-                            case Silent -> "";
-                            case Communist -> ":smiles drunkenly: Here is da vectors, in file \"%s\"! :hiccups:";
-                            default -> "Unknown style.";
-                        }
-                        ,(name!=null?name:"[current time]")
+                switch(Settings.Style){ //a bit copied, feel free to change
+                    case Verbose -> "The script hath been executed, my Sire! Please enjoy \"%s\" over in the 'plots' folder!";
+                    case Normal -> "Python script successfully executed. Image \"%s\" stored in folder 'plots'.";
+                    case Silent -> "";
+                    case Communist -> ":smiles drunkenly: Here is da vectors, in file \"%s\"! :hiccups:";
+                    default -> "Unknown style.";
+                }
+                ,(name!=null?name:"[current time]")
                 )
         );
     }
@@ -199,7 +199,7 @@ public class Voicelines {
                     case Communist -> "do NOT let bro cook again";
                     default -> "Unknown style.";
                 }
-                        + " " + x
+                + " " + x
         );
     }
 }

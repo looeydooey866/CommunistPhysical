@@ -135,6 +135,7 @@ public class Interactor {
         System.out.println(output);
     }
 
+
     private void pyplot() throws Exception { // please rehaul
         String pythonFileName = String.format("src%sgrapher.py", File.separator);
 
@@ -237,6 +238,7 @@ public class Interactor {
             case "style" -> changeStyle();
             case "inputangleformat" -> changeInputAngleFormat();
             case "outputangleformat" -> changeOutputAngleFormat();
+            case "ospathdelimiter" -> changeOSPathDelimiter();
         }
     }
 
@@ -244,6 +246,12 @@ public class Interactor {
         int precision = Integer.parseInt(Parser.next());
         Settings.setPrecision(precision);
         Voicelines.changeSetting("precision",Integer.toString(precision));
+    }
+
+    private void changeOSPathDelimiter(){
+        String delim = queries.removeFirst();
+        Settings.setOSPathDelimiter(delim);
+        Voicelines.changeSetting("ospathdelimiter",delim);
     }
 
     private void alias(){
