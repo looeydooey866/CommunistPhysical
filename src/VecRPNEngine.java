@@ -90,8 +90,8 @@ public class VecRPNEngine {
                 Character c = s.charAt(0);
                 if (isOperator(c)) {
                     while (!operators.empty() &&
-                            ((!unary && priority(operators.peek()) >= priority(c))) ||
-                                    (unary && priority(operators.peek()) > priority(c))
+                        ((!unary && priority(operators.peek()) >= priority(c))) ||
+                        (unary && priority(operators.peek()) > priority(c))
                     ) {
                         operate(operators.pop());
                     }
@@ -117,83 +117,8 @@ public class VecRPNEngine {
                 }
             }
             else {
-                if (s.startsWith("Pol(",i)){
-                    String l = "", r = "";
-                    int balance = 1;
-                    i+=4;
-                    boolean comma = false;
-                    while (i < n){
-                        if (s.charAt(i) == '('){
-                            balance++;
-                        }
-                        else if (s.charAt(i) == ')'){
-                            balance--;
-                            if (balance <= 0){
-                                break;
-                            }
-                        }
-                        else if (s.charAt(i) == ','){
-                            comma = true;
-                        }
-                        else {
-                            if (!comma){
-                                l += s.charAt(i);
-                            }
-                            else {
-                                r += s.charAt(i);
-                            }
-                        }
-                        i++;
-                    }
-                    vectors.push(Vector.pol(RPNEngine.evaluate(l),RPNEngine.evaluate(r)));
-                    unary = false;
-                }
-                else if (s.startsWith("Rect(",i)){
-                    int balance = 1;
-                    i+=5;
-                    boolean comma = false;
-                    String x =  "", y = "";
-                    while (i < n){
-                        if (s.charAt(i) == '('){
-                            balance++;
-                        }
-                        else if (s.charAt(i) == ')'){
-                            balance--;
-                            if (balance <= 0){
-                                break;
-                            }
-                        }
-                        else if (s.charAt(i) == ','){
-                            comma = true;
-                        }
-                        else{
-                            if (!comma){
-                                x += s.charAt(i);
-                            }
-                            else {
-                                y += s.charAt(i);
-                            }
-                        }
-                        i++;
-                    }
-                    vectors.push(Vector.rect(RPNEngine.evaluate(x),RPNEngine.evaluate(y)));
-                    unary = false;
-                }
-                else {
-                    String vec = "";
-                    while (i<n&&!isSymbol(s.charAt(i))){
-                        vec+=s.charAt(i++);
-                    }
-                    i--;
-                    if (dataTable.containsKey(vec)){
-                        System.err.println("Vector " + vec + " found");
-                        vectors.push(dataTable.get(vec));
-                    }
-                    else {
-                        System.err.println("Not found: vector " + vec);
-                    }
-                    unary = false;
-                }
+                vectors.push(takeVec(s,keywords,dataTable));
+                unary = false;
             }
         }
         while (!operators.empty()){
@@ -349,10 +274,10 @@ public class VecRPNEngine {
             x.setInputSanitized(s);
             ArrayList<String> split = x.takeList(str+"(",")",",",null);
             if (Objects.equals(str,"Pol")){
-                return Vector.pol(Double.parseDouble(split.get(0)), Double.parseDouble(split.get(1)));
+                return Vector.pol(RPNEngine.evaluate(split.get(0)), RPNEngine.evaluate(split.get(1)));
             }
             else if (Objects.equals(str,"Rect")){
-                return Vector.rect(Double.parseDouble(split.get(0)), Double.parseDouble(split.get(1)));
+                return Vector.rect(RPNEngine.evaluate(split.get(0)), RPNEngine.evaluate(split.get(1)));
             }
         }
         else {
