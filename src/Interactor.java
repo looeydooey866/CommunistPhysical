@@ -1,14 +1,12 @@
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.random.*;
 
 public class Interactor {
     private final HashMap<String,Vector> dataTable = new HashMap<>();
     private final Scanner Reader = new Scanner(System.in);
-    private Scanner Parser = null;
+    private Parser Parsenator = null;
     public boolean terminated = false;
     private final HashMap<String,String> aliases = new HashMap<>();
 
@@ -17,9 +15,10 @@ public class Interactor {
     }
 
     public void acceptQuery() throws Exception{
-        Parser = new Scanner(Reader.nextLine());
+        Parsenator = new Parser();
+        Parsenator.setInput(Reader.nextLine());
 
-        String queryType = Parser.next();
+        String queryType = Parsenator.next();
 
         while (aliases.containsKey(queryType)) { //take care of alias of alias
             queryType = aliases.get(queryType);
@@ -62,7 +61,7 @@ public class Interactor {
     }
 
     private void alter(String name){
-        String op = Parser.next();
+        String op = Parsenator.next();
 
         if (Objects.equals(op,"=")){
 
@@ -70,36 +69,15 @@ public class Interactor {
     }
 
     private void store(){
-        this.parserCharMode(true);
-        String vecnames = "";
-        while (Parser.hasNext()){
-            String ch = Parser.next();
-            if (Objects.equals(ch,"=")){
-                break;
-            }
-            vecnames += ch;
-        }
-        vecnames = vecnames.trim();
-        ArrayList<String> vecs = new ArrayList<>();
-        if (vecnames.charAt(0) != '['){
-            vecs.add(vecnames);
-        }
-        else {
-            Scanner myScan = new Scanner(vecnames.substring(1,vecnames.length()-1));
-            myScan.useDelimiter(",");
-            while (myScan.hasNext()){
-                vecs.add(myScan.next().trim());
-            }
-            myScan.close();
-        }
+        ArrayList<String> vecnames = Parsenator.takeList("[","]",",","=");
+        ArrayList<String> keywords = new ArrayList<String>(){{add("Pol");add("Rect");}};
+        VecRPNEngine engine = new VecRPNEngine(Parsenator.tokenize(keywords));
+        Vector res = engine.tokenEval(keywords,dataTable);
 
-        this.parserCharMode(false);
-        String eval = Parser.nextLine();
-        Vector res = new Vector(VecRPNEngine.evaluate(eval,dataTable));
-        for (String s : vecs){
+        for (String s : vecnames){
             dataTable.put(s,res);
         }
-        Voicelines.stored(vecnames);
+        Voicelines.stored("");
     }
 
     private void calc(){
@@ -108,7 +86,7 @@ public class Interactor {
 
     private void desmos(){
         StringBuilder output = new StringBuilder();
-        String qry = Parser.nextLine();
+        String qry = Parsenator.nextLine();
         qry = qry.trim();
         ArrayList<String> queries = new ArrayList<>();
         if (qry.charAt(0) != '['){
@@ -145,7 +123,7 @@ public class Interactor {
         String name = null;
         String result = null;
         {
-            Scanner takeNames = new Scanner(Parser.nextLine());
+            Scanner takeNames = new Scanner(Parsenator.nextLine());
             takeNames.useDelimiter("->");
             String current = takeNames.next().trim();
             result = current;
@@ -198,7 +176,7 @@ public class Interactor {
     }
 
     private void retrieve(){
-        String quer = Parser.nextLine().trim();
+        String quer = Parsenator.nextLine().trim();
         ArrayList<String> queries = new ArrayList<>();
         if (quer.charAt(0) != '['){
             queries.add(quer);
@@ -232,7 +210,7 @@ public class Interactor {
     }
 
     private void set(){
-        String settingName = Parser.next();
+        String settingName = Parsenator.next();
         switch(settingName){
             case "precision" -> changePrecision();
             case "style" -> changeStyle();
@@ -243,44 +221,44 @@ public class Interactor {
     }
 
     private void changePrecision(){
-        int precision = Integer.parseInt(Parser.next());
+        int precision = Integer.parseInt(Parsenator.next());
         Settings.setPrecision(precision);
         Voicelines.changeSetting("precision",Integer.toString(precision));
     }
 
     private void changeOSPathDelimiter(){
-        String delim = queries.removeFirst();
+        String delim = Parsenator.next();
         Settings.setOSPathDelimiter(delim);
         Voicelines.changeSetting("ospathdelimiter",delim);
     }
 
     private void alias(){
-        String newalias = Parser.next();
-        String to = Parser.next();
+        String newalias = Parsenator.next();
+        String to = Parsenator.next();
         aliases.put(newalias,to);
     }
 
     private void unalias(){
-        String removal = Parser.next();
+        String removal = Parsenator.next();
         if (aliases.containsKey(removal)) {
             aliases.remove(removal);
         }
     }
 
     private void changeStyle(){
-        String style = Parser.next();
+        String style = Parsenator.next();
         Settings.setStyle(style);
         Voicelines.changeSetting("style",style);
     }
 
     private void changeInputAngleFormat(){
-        String angleformat = Parser.next();
+        String angleformat = Parsenator.next();
         Settings.setInputAngleFormat(angleformat);
         Voicelines.changeSetting("the input angle format",angleformat);
     }
 
     private void changeOutputAngleFormat(){
-        String angleformat = Parser.next();
+        String angleformat = Parsenator.next();
         Settings.setOutputAngleFormat(angleformat);
         Voicelines.changeSetting("the output angle format",angleformat);
     }
@@ -288,13 +266,207 @@ public class Interactor {
     private void debug(){
         Voicelines.debug();
     }
+}
 
-    private void parserCharMode(boolean b){
-        if (b){
-            Parser.useDelimiter("");
+class Parser{
+    private Scanner scanner = null;
+
+    public Parser(Scanner scanner){
+        this.scanner = scanner;
+    }
+
+    public Parser(String s){
+        this.scanner = new Scanner(s);
+    }
+
+    public Parser(){
+        this((Scanner) null);
+    }
+
+    public void setInput(String s){
+        this.scanner = new Scanner(s);
+    }
+
+    public void setInputSanitized(String s){
+        this.scanner = new Scanner(sanitize(s));
+    }
+
+    public static String sanitize(String s){
+        String res = "";
+        for (int i=0;i<s.length();i++){
+            if (s.charAt(i) != ' '){
+                res += s.charAt(i);
+            }
+        }
+        return res;
+    }
+
+    public void setDelimiter(String delimiter){
+        this.scanner.useDelimiter(delimiter);
+    }
+
+    public int nextInt(String delimiter){
+        this.setDelimiter(delimiter);
+        return scanner.nextInt();
+    }
+
+    public int nextInt(){
+        this.setDelimiter(" ");
+        return scanner.nextInt();
+    }
+
+    public double nextDouble(String delimiter){
+        this.setDelimiter(delimiter);
+        return scanner.nextDouble();
+    }
+
+    public double nextDouble(){
+        this.setDelimiter(" ");
+        return scanner.nextDouble();
+    }
+
+    public float nextFloat(String delimiter){
+        this.setDelimiter(delimiter);
+        return scanner.nextFloat();
+    }
+
+    public float nextFloat(){
+        this.setDelimiter(" ");
+        return scanner.nextFloat();
+    }
+
+    public boolean hasNext(String delimiter){
+        this.setDelimiter(delimiter);
+        return scanner.hasNext();
+    }
+
+    public boolean hasNext(){
+        this.setDelimiter(" ");
+        return scanner.hasNext();
+    }
+
+    public String next(String delimiter){
+        this.setDelimiter(delimiter);
+        return scanner.next();
+    }
+
+    public String next(){
+        this.setDelimiter(" ");
+        return scanner.next();
+    }
+
+    public Character nextChar(){
+        this.setDelimiter("");
+        return scanner.next().charAt(0);
+    }
+
+    public String nextSingleString(){
+        this.setDelimiter("");
+        return scanner.next();
+    }
+
+    public String peek(String delimiter){
+        this.setDelimiter(delimiter);
+        this.scanner.hasNext(".*");
+        return this.scanner.match().group(0);
+    }
+
+    public Character peekChar(){
+        this.setDelimiter("");
+        this.scanner.hasNext(".*");
+        return this.scanner.match().group(0).charAt(0);
+    }
+
+    public String nextLine(){
+        return this.scanner.nextLine();
+    }
+
+    public String takeUntil(String delimiter, boolean consume){
+        if (delimiter == null){
+            return this.scanner.nextLine();
+        }
+        this.setDelimiter(delimiter);
+        String res = this.scanner.next();
+        if (consume){
+            this.setDelimiter("");
+            for (int i=0;i<delimiter.length();i++){
+                this.scanner.next();
+            }
+        }
+        return res;
+    }
+
+    public ArrayList<String> takeList(String opener, String closener, String separator, String delimiter){
+        String operation = this.takeUntil(delimiter,true).trim();
+        ArrayList<String> res = new ArrayList<>();
+        if (operation.startsWith(opener) && operation.endsWith(closener)){
+            res = split(operation.substring(opener.length(),operation.length()-closener.length()),separator);
         }
         else {
-            Parser.useDelimiter(" ");
+            res.add(operation);
+        }
+        return res;
+    } // abcd      =  Pol(3,((((pi))))
+
+
+    public static ArrayList<String> split(String operation, String delimiter){
+        Scanner myScanner = new Scanner(operation);
+        myScanner.useDelimiter(delimiter);
+        ArrayList<String> res = new ArrayList<>();
+        while (myScanner.hasNext()){
+            res.add(myScanner.next().trim());
+        }
+        return res;
+    }
+
+    // a🍍b
+    // Ωåœ∑ß≈∂´çƒ®√©†∫º¡˙•¡º•™¡£ºª£™¢¢∞£¶•ª˙¥˜∆¨µ˚ˆ≤¬ø
+    // d = ∑[a,b,c]
+    // d = ∆[a,b]
+    // d = delta[a,b]
+    public Stack<String> tokenize(ArrayList<String> keywords){
+        Stack<String> res = new Stack<>();
+        while (this.hasNext("")){
+            if (Character.isAlphabetic(this.peekChar())){
+                String s = "";
+                while (this.hasNext("") && Character.isAlphabetic(this.peekChar())){
+                    s += this.nextChar();
+                }
+                if (keywords.contains(s)){
+                    s += this.nextChar();
+                    int balance = 1;
+                    while (this.hasNext("")){
+                        if (this.peekChar() == '('){
+                            balance++;
+                        }
+                        else if (this.peekChar() == ')'){
+                            balance--;
+                        }
+                        s += this.nextChar();
+                        if (balance <= 0){
+                            break;
+                        }
+                    }
+                }
+                res.push(s);
+            }
+            else {
+                res.push(this.nextSingleString());
+            }
+        }
+        return res;
+    }
+
+    public static void main(String[] args){
+        String eval = "Pol(3,4) + a + b - abaadbf + Rect(3,3)";
+        Parser parser = new Parser();
+        parser.setInputSanitized(eval);
+        ArrayList<String> keywords = new ArrayList<>();
+        keywords.add("Pol");
+        keywords.add("Rect");
+        Stack<String> out = parser.tokenize(keywords);
+        while (!out.empty()){
+            System.err.println(out.pop());
         }
     }
 }
