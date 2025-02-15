@@ -185,21 +185,51 @@ public class Voicelines {
                     case Communist -> ":smiles drunkenly: Here is da vectors, in file \"%s\"! :hiccups:";
                     default -> "Unknown style.";
                 }
-                ,(name!=null?name:"[current time]")
+                ,name
+                )
+        );
+    }
+
+    public static void pyplotDefaultName(){
+        System.out.println(
+                String.format(
+                        switch(Settings.Style){
+                            case Verbose -> "The script hath been executed, my Sire! Please enjoy your graph (named after the current timestamp) over in the 'plots' folder!";
+                            case Normal -> "TODO";
+                            case Silent -> "TODO";
+                            case Communist -> "TODO";
+                            default -> "Unknown style.";
+                        }
+                )
+        );
+    }
+
+    public static void pyplotDisplayed(){
+        System.out.println(
+                String.format(
+                        switch(Settings.Style){
+                            case Verbose -> "The script hath been executed, my Sire! Please enjoy this beautiful graph I drew on my very own!";
+                            case Normal -> "TODO";
+                            case Silent -> "TODO";
+                            case Communist -> "TODO";
+                            default -> "Unknown style.";
+                        }
                 )
         );
     }
 
     public static void pyplotError(int x){
         System.out.println(
+                String.format(
                 switch(Settings.Style){ //a bit copied, feel free to change
-                    case Verbose -> "idk";
-                    case Normal -> "what did bro do";
-                    case Silent -> "";
-                    case Communist -> "do NOT let bro cook again";
+                    case Verbose -> "Error sire! Mr. Python left me a note, it says \"Exit code: %d\"! He also bit me out of anger, yeowch!";
+                    case Normal -> "TODO";
+                    case Silent -> "TODO";
+                    case Communist -> "TODO";
                     default -> "Unknown style.";
                 }
-                + " " + x
+                ,x
+        )
         );
     }
 }

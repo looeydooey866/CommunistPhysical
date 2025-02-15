@@ -57,8 +57,8 @@ if sys.argv[counter] == "display":
 elif sys.argv[counter] == "save":
     counter = counter + 1
     name = ""
+    print("hi, name given is " + sys.argv[counter])
     if sys.argv[counter] != "<<NO_NAME>>":
-        counter = counter + 1
         name = sys.argv[counter]
     else:
         name=now.strftime("vectors_%d-%m-%y_%H:%M:%S")

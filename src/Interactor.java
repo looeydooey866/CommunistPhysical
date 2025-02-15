@@ -100,14 +100,14 @@ public class Interactor {
         ArrayList<String> names = new ArrayList<>();
         boolean usename = false;
         String name = null;
-        String result = null;
         {
             Parser takeNames = new Parser(parsenator.nextLine(),this.keywords,this.dataTable);
             takeNames.consumeWhitespace();
             names = takeNames.takeList();
             takeNames.consumeWhitespace();
-            if (takeNames.hasNext(Pattern.compile("->"))) {
+            if (takeNames.peek("\n").startsWith("->")) {
                 takeNames.consume('>'); //lol
+                name = takeNames.next("\n").trim();
                 usename = true;
             }
         }
@@ -134,16 +134,22 @@ public class Interactor {
         Process proc = p.start();
         BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
         String line;
-        while ((line = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null)
             System.err.println("Python output: " + line);
-        }
+
         int exitCode = proc.waitFor();
         if (exitCode == 0){ //need some voicelines for this
-            Voicelines.pyplot(result);
+            if (Objects.equals(que, "save")) {
+                if (usename)
+                    Voicelines.pyplot(name);
+                else
+                    Voicelines.pyplotDefaultName();
+            }
+            else if (Objects.equals(que, "display"))
+                Voicelines.pyplotDisplayed();
         }
-        else {
+        else
             Voicelines.pyplotError(exitCode);
-        }
     }
 
     private void retrieve(){
