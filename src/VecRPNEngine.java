@@ -7,13 +7,18 @@ public class VecRPNEngine {
     public Stack<String> tokens = new Stack<>();
     private final Stack<Character> operators = new Stack<Character>();
     private final Stack<Vector> vectors = new Stack<>();
+    private Parser parsenator;
+    private ArrayList<String> keywords;
+    private HashMap<String,Vector> dataTable;
 
     public VecRPNEngine(){
 
     }
 
-    public VecRPNEngine(Stack<String> stack){
-        this.tokens = stack;
+    public VecRPNEngine(Parser parser){
+        this.parsenator = parser;
+        this.keywords = parsenator.getKeywords();
+        this.dataTable = parsenator.getDataTable();
     }
 
     public boolean isUnary(Character c){
@@ -77,8 +82,13 @@ public class VecRPNEngine {
     public  boolean isVecOp(Character operator){
         return (operator == '+' || operator == '-' || operator == '#' || operator == '=');
     }
-    // "Pol(3,4)", "+", "Rect(-1,-1)", "-", "a"
-    public  Vector tokenEval(ArrayList<String> keywords, HashMap<String,Vector> dataTable){
+
+    public  Vector evaluate(){
+        parsenator.consumeWhitespace();
+        tokens = parsenator.tokenize();
+        for (String s : tokens){
+            System.err.println("Token: " + s);
+        }
         operators.clear();
         vectors.clear();
         final int n = tokens.size();
@@ -117,7 +127,7 @@ public class VecRPNEngine {
                 }
             }
             else {
-                vectors.push(takeVec(s,keywords,dataTable));
+                vectors.push(takeVec(s));
                 unary = false;
             }
         }
@@ -127,7 +137,7 @@ public class VecRPNEngine {
         return vectors.peek();
     }
 
-    public  Vector eval(String s, HashMap<String,Vector> dataTable){
+    public  Vector eval(String s){
         String str = s;
         s = "";
         for (int i=0;i<str.length();i++){
@@ -260,7 +270,7 @@ public class VecRPNEngine {
     }
     // a + Pol(3,4) + Rect(-1,-1) -> Vector(a,b,c,d)
 
-    public Vector takeVec(String s, ArrayList<String> keywords, HashMap<String, Vector> dataTable){
+    public Vector takeVec(String s){
         String str = "";
         for (int i=0;i<s.length();i++){
             if (!Character.isAlphabetic(s.charAt(i))){
@@ -270,9 +280,7 @@ public class VecRPNEngine {
             str += s.charAt(i);
         }
         if (keywords.contains(str)){
-            Parser x = new Parser();
-            x.setInputSanitized(s);
-            ArrayList<String> split = x.takeList(str+"(",")",",",null);
+            ArrayList<String> split = Parser.split(s.substring(str.length()+1,s.length()-1),',');
             if (Objects.equals(str,"Pol")){
                 return Vector.pol(RPNEngine.evaluate(split.get(0)), RPNEngine.evaluate(split.get(1)));
             }
@@ -283,5 +291,6 @@ public class VecRPNEngine {
         else {
             return dataTable.get(str);
         }
+        return null;
     }
 }
