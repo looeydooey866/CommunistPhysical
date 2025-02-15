@@ -193,10 +193,10 @@ public class Voicelines {
     public static void pyplotError(int x){
         System.out.println(
                 switch(Settings.Style){ //a bit copied, feel free to change
-                    case Verbose -> "idk";
-                    case Normal -> "what did bro do";
+                    case Verbose -> "Sire, we have detected an error in pyplot. We apologize for the inconvenience";
+                    case Normal -> "Error in pyplot detected.";
                     case Silent -> "";
-                    case Communist -> "do NOT let bro cook again";
+                    case Communist -> "GO. TO. GULAG.";
                     default -> "Unknown style.";
                 }
                 + " " + x
