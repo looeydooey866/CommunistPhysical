@@ -12,6 +12,7 @@ CommunistPhysical is a Java-based program designed to assist our association wit
    - **Vector Equations**: Supports operations such as scalar-vector multiplication for advanced equation handling.
    - **Coordinate Conversion**: Seamlessly convert between polar and rectangular coordinate systems.
    - **Desmos Visualisation Compatibility**: Beautifully convert your vectors into equations that can be plugged in to Desmos for viewing!
+   - **Pyplot Visualisation Compatibility**: Draw your vectors using the pyplot function! You can either save or directly display your graph.
 
 ---
 
@@ -22,3 +23,9 @@ CommunistPhysical is a Java-based program designed to assist our association wit
 
 - **Acceleration Class**  
   A class to manage acceleration calculations, facilitating the analysis of changing velocities over time.
+
+- **Particle Class**
+   A class which allows you to create a Particle, supporting calculations of position, velocity, acceleration, force, momentum, energy, gravity and more.
+
+- **Point Mass Class**
+  A class which allows you to create a Point Mass object, which can have multiple forces applied on it.
