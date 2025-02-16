@@ -86,9 +86,6 @@ public class VecRPNEngine {
     public  Vector evaluate(){
         parsenator.consumeWhitespace();
         tokens = parsenator.tokenize();
-        for (String s : tokens){
-            System.err.println("Token: " + s);
-        }
         operators.clear();
         vectors.clear();
         final int n = tokens.size();
@@ -253,11 +250,7 @@ public class VecRPNEngine {
                     }
                     i--;
                     if (dataTable.containsKey(vec)){
-                        System.err.println("Vector " + vec + " found");
                         vectors.push(dataTable.get(vec));
-                    }
-                    else {
-                        System.err.println("Not found: vector " + vec);
                     }
                     unary = false;
                 }

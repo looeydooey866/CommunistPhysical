@@ -113,7 +113,6 @@ public class Interactor {
         }
         args.add(Integer.toString(names.size()));
         for (String query : names) {
-            System.err.println(query);
             args.add(query);
             Vector cur = takeVec(query);
             args.add(String.valueOf(cur.recform.getX()));
