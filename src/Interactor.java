@@ -10,7 +10,8 @@ public class Interactor {
     public boolean terminated = false;
     private final HashMap<String,String> aliases = new HashMap<>();
     public final ArrayList<String> keywords = new ArrayList<String>(){{add("Pol");add("Rect");}};
-    private Parser parsenator = new Parser(new Scanner(""),this.keywords,this.dataTable);
+    public final ArrayList<Character> multiVectorOperators = new ArrayList<Character>(){{add('Σ');}};
+    private final Parser parsenator = new Parser(new Scanner(""),this.keywords,this.dataTable,this.multiVectorOperators);
 
     public void query(){
         Voicelines.askQuery();
@@ -101,11 +102,11 @@ public class Interactor {
         boolean usename = false;
         String name = null;
         {
-            Parser takeNames = new Parser(parsenator.nextLine(),this.keywords,this.dataTable);
+            Parser takeNames = new Parser(parsenator.nextLine(),this.keywords,this.dataTable,this.multiVectorOperators);
             takeNames.consumeWhitespace();
             names = takeNames.takeList();
             takeNames.consumeWhitespace();
-            if (takeNames.peek("\n").startsWith("->")) {
+            if (takeNames.hasNext() && takeNames.peek("\n").startsWith("->")) {
                 takeNames.consume('>'); //lol
                 name = takeNames.next("\n").trim();
                 usename = true;
@@ -252,27 +253,6 @@ public class Interactor {
             return dataTable.get(str);
         }
         return null;
-    }
-
-    public static void main(String[] args){
-        String s = "Hello world-> ";
-        Scanner x = new Scanner(s);
-
-        x.useDelimiter("->");
-        x.next();
-        while (true){
-            x.useDelimiter("");
-            x.hasNext(".*");
-            if (x.match().group(0).charAt(0) == ' '){
-                x.next();
-            }
-            else {
-                break;
-            }
-        }
-        x.useDelimiter("->");
-        System.out.println(x.hasNext());
-        System.out.println(x.next());
     }
 }
 
