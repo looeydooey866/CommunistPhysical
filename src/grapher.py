@@ -63,5 +63,4 @@ elif sys.argv[counter] == "save":
     else:
         name=now.strftime("vectors_%d-%m-%y_%H:%M:%S")
     plt.savefig("src"+os.sep+"plots"+os.sep+name+".png",dpi=1200)
-
 sys.exit()

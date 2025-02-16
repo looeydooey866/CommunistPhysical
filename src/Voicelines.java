@@ -223,7 +223,7 @@ public class Voicelines {
                 String.format(
                 switch(Settings.Style){ //a bit copied, feel free to change
                     case Verbose -> "Error sire! Mr. Python left me a note, it says \"Exit code: %d\"! He also bit me out of anger, yeowch!";
-                    case Normal -> "Error in pyplot detected.";
+                  case Normal -> "Error in pyplot detected. Exit code: %d";
                     case Silent -> "";
                     case Communist -> "GO. TO. GULAG. ROOM NUMBER %d.";
                     default -> "Unknown style.";

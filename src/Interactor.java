@@ -127,6 +127,7 @@ public class Interactor {
             else
                 args.add("<<NO_NAME>>");
         }
+        // size - 2, if size - 1 divisible by 3
 
         ProcessBuilder p = new ProcessBuilder("python3",pythonFileName);
         p.command().addAll(args);
