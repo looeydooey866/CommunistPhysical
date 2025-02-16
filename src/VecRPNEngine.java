@@ -1,35 +1,55 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Stack;
 
 public class VecRPNEngine {
-    private static final Stack<Character> operators = new Stack<Character>();
-    private static final Stack<Vector> vectors = new Stack<>();
+    public Stack<String> tokens = new Stack<>();
+    private final Stack<Character> operators = new Stack<Character>();
+    private final Stack<Vector> vectors = new Stack<>();
+    private Parser parsenator;
+    private ArrayList<String> keywords;
+    private HashMap<String,Vector> dataTable;
 
-    public static boolean isUnary(Character c){
+    public VecRPNEngine(){
+
+    }
+
+    public VecRPNEngine(Parser parser){
+        this.parsenator = parser;
+        this.keywords = parsenator.getKeywords();
+        this.dataTable = parsenator.getDataTable();
+    }
+
+    public boolean isUnary(Character c){
         return (c == '#' || c == '=');
     }
 
-    public static boolean ignore(Character c){
+    public  boolean ignore(Character c){
         return switch(c){
             case ' ' -> true;
             default -> false;
         };
     }
 
-    public static boolean isSymbol(Character c){
+    public  boolean isSymbol(Character c){
         return isOperator(c) || c=='('||c==')';
     }
 
-    public static boolean isOperator(Character c){
+    public boolean isSymbol(String s){
+        return (s.length() == 1 && isSymbol(s.charAt(0)));
+    }
+
+    public  boolean isOperator(Character c){
         return (
-            c == '+' ||
-            c == '-' ||
-            c == '#' ||
-            c == '='
+                c == '+' ||
+                        c == '-' ||
+                        c == '#' ||
+                        c == '='
         );
     }
 
-    public static void operate(Character operator){
+    public  void operate(Character operator){
         if (isUnary(operator)) {
             Vector left = vectors.pop();
             switch(operator){
@@ -47,7 +67,7 @@ public class VecRPNEngine {
         }
     }
 
-    public static int priority(Character operator){
+    public  int priority(Character operator){
         if (isUnary(operator)){
             return 2;
         }
@@ -59,13 +79,65 @@ public class VecRPNEngine {
         }
     }
 
-    public static boolean isVecOp(Character operator){
+    public  boolean isVecOp(Character operator){
         return (operator == '+' || operator == '-' || operator == '#' || operator == '=');
     }
 
+    public  Vector evaluate(){
+        parsenator.consumeWhitespace();
+        tokens = parsenator.tokenize();
+        for (String s : tokens){
+            System.err.println("Token: " + s);
+        }
+        operators.clear();
+        vectors.clear();
+        final int n = tokens.size();
+        boolean unary = true;
+        while (!tokens.empty()) {
 
+            String s = tokens.pop();
+            if (isSymbol(s)){
+                Character c = s.charAt(0);
+                if (isOperator(c)) {
+                    while (!operators.empty() &&
+                        ((!unary && priority(operators.peek()) >= priority(c))) ||
+                        (unary && priority(operators.peek()) > priority(c))
+                    ) {
+                        operate(operators.pop());
+                    }
+                    if (!unary) {
+                        operators.push(c);
+                    } else {
+                        operators.push(switch (c) {
+                            case '+' -> '#';
+                            case '-' -> '=';
+                            default -> ' ';
+                        });
+                    }
+                    unary = true;
+                } else if (c == '(') {
+                    operators.push(c);
+                    unary = true;
+                } else if (c == ')') {
+                    while (!operators.empty() && !(operators.peek() == '(')) {
+                        operate(operators.pop());
+                    }
+                    operators.pop();
+                    unary = false;
+                }
+            }
+            else {
+                vectors.push(takeVec(s));
+                unary = false;
+            }
+        }
+        while (!operators.empty()){
+            operate(operators.pop());
+        }
+        return vectors.peek();
+    }
 
-    public static Vector evaluate(String s, HashMap<String,Vector> dataTable){
+    public  Vector eval(String s){
         String str = s;
         s = "";
         for (int i=0;i<str.length();i++){
@@ -195,5 +267,30 @@ public class VecRPNEngine {
             operate(operators.pop());
         }
         return vectors.peek();
+    }
+    // a + Pol(3,4) + Rect(-1,-1) -> Vector(a,b,c,d)
+
+    public Vector takeVec(String s){
+        String str = "";
+        for (int i=0;i<s.length();i++){
+            if (!Character.isAlphabetic(s.charAt(i))){
+                break;
+            }
+
+            str += s.charAt(i);
+        }
+        if (keywords.contains(str)){
+            ArrayList<String> split = Parser.split(s.substring(str.length()+1,s.length()-1),',');
+            if (Objects.equals(str,"Pol")){
+                return Vector.pol(RPNEngine.evaluate(split.get(0)), RPNEngine.evaluate(split.get(1)));
+            }
+            else if (Objects.equals(str,"Rect")){
+                return Vector.rect(RPNEngine.evaluate(split.get(0)), RPNEngine.evaluate(split.get(1)));
+            }
+        }
+        else {
+            return dataTable.get(str);
+        }
+        return null;
     }
 }

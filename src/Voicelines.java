@@ -185,21 +185,51 @@ public class Voicelines {
                     case Communist -> ":smiles drunkenly: Here is da vectors, in file \"%s\"! :hiccups:";
                     default -> "Unknown style.";
                 }
-                ,(name!=null?name:"[current time]")
+                ,name
+                )
+        );
+    }
+
+    public static void pyplotDefaultName(){
+        System.out.println(
+                String.format(
+                        switch(Settings.Style){
+                            case Verbose -> "The script hath been executed, my Sire! Please enjoy your graph (named after the current timestamp) over in the 'plots' folder!";
+                            case Normal -> "TODO";
+                            case Silent -> "TODO";
+                            case Communist -> "TODO";
+                            default -> "Unknown style.";
+                        }
+                )
+        );
+    }
+
+    public static void pyplotDisplayed(){
+        System.out.println(
+                String.format(
+                        switch(Settings.Style){
+                            case Verbose -> "The script hath been executed, my Sire! Please enjoy this beautiful graph I drew on my very own!";
+                            case Normal -> "TODO";
+                            case Silent -> "TODO";
+                            case Communist -> "TODO";
+                            default -> "Unknown style.";
+                        }
                 )
         );
     }
 
     public static void pyplotError(int x){
         System.out.println(
+                String.format(
                 switch(Settings.Style){ //a bit copied, feel free to change
-                    case Verbose -> "Sire, we have detected an error in pyplot. We apologize for the inconvenience";
-                    case Normal -> "Error in pyplot detected.";
+                    case Verbose -> "Error sire! Mr. Python left me a note, it says \"Exit code: %d\"! He also bit me out of anger, yeowch!";
+                  case Normal -> "Error in pyplot detected. Exit code: %d";
                     case Silent -> "";
-                    case Communist -> "GO. TO. GULAG.";
+                    case Communist -> "GO. TO. GULAG. ROOM NUMBER %d.";
                     default -> "Unknown style.";
                 }
-                + " " + x
+                ,x
+        )
         );
     }
 }

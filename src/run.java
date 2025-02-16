@@ -1,14 +1,9 @@
 public class run{
-    public static void main(String[] args){
+    public static void main(String[] args) throws Exception {
         Interactor x = new Interactor();
         while (!x.terminated){
             x.query();
-            try{
-                x.acceptQuery();
-            }
-            catch(Exception e){
-                System.out.println("what happened bro i caught " + e);
-            }
+            x.acceptQuery();
         }
     }
 } /*

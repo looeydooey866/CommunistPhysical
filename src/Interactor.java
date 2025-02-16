@@ -1,25 +1,25 @@
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.random.*;
+import java.util.regex.Pattern;
 
 public class Interactor {
     private final HashMap<String,Vector> dataTable = new HashMap<>();
-    private final Scanner Reader = new Scanner(System.in);
-    private Scanner Parser = null;
+    private final Scanner reader = new Scanner(System.in);
     public boolean terminated = false;
     private final HashMap<String,String> aliases = new HashMap<>();
+    public final ArrayList<String> keywords = new ArrayList<String>(){{add("Pol");add("Rect");}};
+    private Parser parsenator = new Parser(new Scanner(""),this.keywords,this.dataTable);
 
     public void query(){
         Voicelines.askQuery();
     }
 
     public void acceptQuery() throws Exception{
-        Parser = new Scanner(Reader.nextLine());
+        parsenator.setInput(reader.nextLine());
 
-        String queryType = Parser.next();
+        String queryType = parsenator.next();
 
         while (aliases.containsKey(queryType)) { //take care of alias of alias
             queryType = aliases.get(queryType);
@@ -45,15 +45,6 @@ public class Interactor {
             case "pyplot" -> pyplot();
             default -> unknownQuery();
         }
-        // retrieve to print
-        // new to vec
-        // set to just mentioning the vector name
-        // debug as self definable function (for debugging purposes)
-        // calculate -> returns a resultant vector and prints it out
-        // desmos a single vec or list of vec
-        // pyplot a single vec or list of vec
-        // a vector argument is either a single vector or a list of vectors
-        // vector/list of vector can also include pol
     }
 
     private void terminate(){
@@ -62,7 +53,7 @@ public class Interactor {
     }
 
     private void alter(String name){
-        String op = Parser.next();
+        String op = parsenator.next();
 
         if (Objects.equals(op,"=")){
 
@@ -70,36 +61,14 @@ public class Interactor {
     }
 
     private void store(){
-        this.parserCharMode(true);
-        String vecnames = "";
-        while (Parser.hasNext()){
-            String ch = Parser.next();
-            if (Objects.equals(ch,"=")){
-                break;
-            }
-            vecnames += ch;
-        }
-        vecnames = vecnames.trim();
-        ArrayList<String> vecs = new ArrayList<>();
-        if (vecnames.charAt(0) != '['){
-            vecs.add(vecnames);
-        }
-        else {
-            Scanner myScan = new Scanner(vecnames.substring(1,vecnames.length()-1));
-            myScan.useDelimiter(",");
-            while (myScan.hasNext()){
-                vecs.add(myScan.next().trim());
-            }
-            myScan.close();
-        }
-
-        this.parserCharMode(false);
-        String eval = Parser.nextLine();
-        Vector res = new Vector(VecRPNEngine.evaluate(eval,dataTable));
-        for (String s : vecs){
+        ArrayList<String> vecnames = parsenator.takeList();
+        parsenator.takeUntil('=');
+        VecRPNEngine engine = new VecRPNEngine(parsenator);
+        Vector res = engine.evaluate();
+        for (String s : vecnames){
             dataTable.put(s,res);
         }
-        Voicelines.stored(vecnames);
+        Voicelines.stored(vecnames.toString());
     }
 
     private void calc(){
@@ -108,75 +77,55 @@ public class Interactor {
 
     private void desmos(){
         StringBuilder output = new StringBuilder();
-        String qry = Parser.nextLine();
-        qry = qry.trim();
-        ArrayList<String> queries = new ArrayList<>();
-        if (qry.charAt(0) != '['){
-            queries.add(qry);
-        }
-        else {
-            Scanner myScan = new Scanner(qry.substring(1,qry.length()-1));
-            myScan.useDelimiter(",");
-            while (myScan.hasNext()){
-                queries.add(myScan.next().trim());
-            }
-        }
+        parsenator.consumeWhitespace();
+        ArrayList<String> queries = parsenator.takeList();
         for (String s : queries) {
-            if (!dataTable.containsKey(s)) {
-                Voicelines.errorNonexistentVector(s);
-                continue;
-            }
-            Vector cur = dataTable.get(s);
-            double d = cur.polform.getTheta().getRad(), a = Math.PI / 4 - d, r = cur.polform.getMag();
+            Vector cur = takeVec(s); double d = cur.polform.getTheta().getRad(), a = Math.PI / 4 - d, r = cur.polform.getMag();
             output.append(String.format("y\\cos %f+x\\sin %f=\\left(x\\cos %f-y\\sin %f\\right)\\left\\{y\\%ce0\\right\\}\\left\\{x^{2}+y^{2}\\le%f^{2}\\right\\}\n", a, a, a, a, (d <= Math.PI ? 'g' : 'l'), r));
             output.append(String.format("V_{%s}=\\ \\left(%s\\cos %s,%s\\sin %s\\right)\n",s,r,d,r,d));
         }
         Voicelines.desmos();
+        System.out.println("========================================\n");
         System.out.println(output);
+        System.out.println("\n========================================");
     }
 
 
     private void pyplot() throws Exception { // please rehaul
-        String pythonFileName = String.format("src%sgrapher.py", File.separator);
+        String que = parsenator.next();
+        final String pythonFileName = String.format("src%sgrapher.py", File.separator);
+        // num of vectors, vector data, display/save, save name <<NO_NAME>> if default
 
         ArrayList<String> args = new ArrayList<>();
         ArrayList<String> names = new ArrayList<>();
         boolean usename = false;
         String name = null;
-        String result = null;
         {
-            Scanner takeNames = new Scanner(Parser.nextLine());
-            takeNames.useDelimiter("->");
-            String current = takeNames.next().trim();
-            result = current;
-            if (takeNames.hasNext()){
+            Parser takeNames = new Parser(parsenator.nextLine(),this.keywords,this.dataTable);
+            takeNames.consumeWhitespace();
+            names = takeNames.takeList();
+            takeNames.consumeWhitespace();
+            if (takeNames.peek("\n").startsWith("->")) {
+                takeNames.consume('>'); //lol
+                name = takeNames.next("\n").trim();
                 usename = true;
-                name = takeNames.next().trim();
-            }
-            takeNames.close();
-            {
-                current = current.trim();
-                if (current.charAt(0) != '['){
-                    names.add(current);
-                }
-                else {
-                    Scanner scn = new Scanner(current.substring(1,current.length()-1));
-                    scn.useDelimiter(",");
-                    while (scn.hasNext()){
-                        names.add(scn.next().trim());
-                    }
-                    scn.close();
-                }
             }
         }
-        for (int i=0;i<names.size();i++){
-            String query = names.get(i);
+        args.add(Integer.toString(names.size()));
+        for (String query : names) {
+            System.err.println(query);
             args.add(query);
-            args.add(String.valueOf(dataTable.get(query).recform.getX()));
-            args.add(String.valueOf(dataTable.get(query).recform.getY()));
+            Vector cur = takeVec(query);
+            args.add(String.valueOf(cur.recform.getX()));
+            args.add(String.valueOf(cur.recform.getY()));
         }
-        if (usename){
-            args.add(name);
+
+        args.add(que);
+        if (Objects.equals(que,"save")) {
+            if (usename)
+                args.add(name);
+            else
+                args.add("<<NO_NAME>>");
         }
         // size - 2, if size - 1 divisible by 3
 
@@ -186,37 +135,29 @@ public class Interactor {
         Process proc = p.start();
         BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
         String line;
-        while ((line = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null)
             System.err.println("Python output: " + line);
-        }
+
         int exitCode = proc.waitFor();
         if (exitCode == 0){ //need some voicelines for this
-            Voicelines.pyplot(result);
+            if (Objects.equals(que, "save")) {
+                if (usename)
+                    Voicelines.pyplot(name);
+                else
+                    Voicelines.pyplotDefaultName();
+            }
+            else if (Objects.equals(que, "display"))
+                Voicelines.pyplotDisplayed();
         }
-        else {
+        else
             Voicelines.pyplotError(exitCode);
-        }
     }
 
     private void retrieve(){
-        String quer = Parser.nextLine().trim();
-        ArrayList<String> queries = new ArrayList<>();
-        if (quer.charAt(0) != '['){
-            queries.add(quer.trim());
-        }
-        else {
-            Scanner myScan = new Scanner(quer.substring(1,quer.length()-1));
-            myScan.useDelimiter(",");
-            while (myScan.hasNext()){
-                queries.add(myScan.next().trim());
-            }
-            myScan.close();
-        }
-
+        ArrayList<String> queries = parsenator.takeList();
         for (String s : queries){
             System.out.println("======= Vector " + s + " =======");
-            assert(dataTable.containsKey(s));
-            Vector.print(dataTable.get(s));
+            Vector.print(takeVec(s));
         }
     }
 
@@ -234,7 +175,7 @@ public class Interactor {
     }
 
     private void set(){
-        String settingName = Parser.next();
+        String settingName = parsenator.next();
         switch(settingName){
             case "precision" -> changePrecision();
             case "style" -> changeStyle();
@@ -245,44 +186,44 @@ public class Interactor {
     }
 
     private void changePrecision(){
-        int precision = Integer.parseInt(Parser.next());
+        int precision = Integer.parseInt(parsenator.next());
         Settings.setPrecision(precision);
         Voicelines.changeSetting("precision",Integer.toString(precision));
     }
 
     private void changeOSPathDelimiter(){
-        String delim = Parser.next();
+        String delim = parsenator.next();
         Settings.setOSPathDelimiter(delim);
         Voicelines.changeSetting("ospathdelimiter",delim);
     }
 
     private void alias(){
-        String newalias = Parser.next();
-        String to = Parser.next();
+        String newalias = parsenator.next();
+        String to = parsenator.next();
         aliases.put(newalias,to);
     }
 
     private void unalias(){
-        String removal = Parser.next();
+        String removal = parsenator.next();
         if (aliases.containsKey(removal)) {
             aliases.remove(removal);
         }
     }
 
     private void changeStyle(){
-        String style = Parser.next();
+        String style = parsenator.next();
         Settings.setStyle(style);
         Voicelines.changeSetting("style",style);
     }
 
     private void changeInputAngleFormat(){
-        String angleformat = Parser.next();
+        String angleformat = parsenator.next();
         Settings.setInputAngleFormat(angleformat);
         Voicelines.changeSetting("the input angle format",angleformat);
     }
 
     private void changeOutputAngleFormat(){
-        String angleformat = Parser.next();
+        String angleformat = parsenator.next();
         Settings.setOutputAngleFormat(angleformat);
         Voicelines.changeSetting("the output angle format",angleformat);
     }
@@ -290,13 +231,49 @@ public class Interactor {
     private void debug(){
         Voicelines.debug();
     }
+    public Vector takeVec(String s){
+        String str = "";
+        for (int i=0;i<s.length();i++){
+            if (!Character.isAlphabetic(s.charAt(i))){
+                break;
+            }
 
-    private void parserCharMode(boolean b){
-        if (b){
-            Parser.useDelimiter("");
+            str += s.charAt(i);
+        }
+        if (keywords.contains(str)){
+            ArrayList<String> split = Parser.split(s.substring(str.length()+1,s.length()-1),',');
+            if (Objects.equals(str,"Pol")){
+                return Vector.pol(RPNEngine.evaluate(split.get(0)), RPNEngine.evaluate(split.get(1)));
+            }
+            else if (Objects.equals(str,"Rect")){
+                return Vector.rect(RPNEngine.evaluate(split.get(0)), RPNEngine.evaluate(split.get(1)));
+            }
         }
         else {
-            Parser.useDelimiter(" ");
+            return dataTable.get(str);
         }
+        return null;
+    }
+
+    public static void main(String[] args){
+        String s = "Hello world-> ";
+        Scanner x = new Scanner(s);
+
+        x.useDelimiter("->");
+        x.next();
+        while (true){
+            x.useDelimiter("");
+            x.hasNext(".*");
+            if (x.match().group(0).charAt(0) == ' '){
+                x.next();
+            }
+            else {
+                break;
+            }
+        }
+        x.useDelimiter("->");
+        System.out.println(x.hasNext());
+        System.out.println(x.next());
     }
 }
+
