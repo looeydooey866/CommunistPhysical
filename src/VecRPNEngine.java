@@ -116,11 +116,13 @@ public class VecRPNEngine {
                     operateMulti(c,count);
                     unary = false;
                 } else if (isOperator(c)) {
-                    while (!operators.empty() &&
-                            ((!unary && priority(operators.peek()) >= priority(c))) ||
-                            (unary && priority(operators.peek()) > priority(c))
-                    ) {
-                        operate(operators.pop());
+                    if (!operators.isEmpty()) {
+                        while (!operators.isEmpty() &&
+                                ((!unary && priority(operators.peek()) >= priority(c))) ||
+                                (unary && priority(operators.peek()) > priority(c))
+                        ) {
+                            operate(operators.pop());
+                        }
                     }
                     if (!unary) {
                         operators.push(c);
