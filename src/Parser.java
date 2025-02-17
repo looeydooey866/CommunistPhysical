@@ -263,7 +263,7 @@ class Parser{
             this.consumeWhitespace();
             if (Character.isAlphabetic(this.peekChar()) && !multiVectorOperators.contains(this.peekChar())){
                 String s = "";
-                while (this.hasNextChar() && Character.isAlphabetic(this.peekChar()))
+                while (this.hasNextChar() && (Character.isLetterOrDigit(this.peekChar())))
                     s += this.nextChar();
                 if (keywords.contains(s)){
                     s += this.nextChar();
