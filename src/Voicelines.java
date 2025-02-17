@@ -232,4 +232,16 @@ public class Voicelines {
         )
         );
     }
+
+    public static void historyRevealed() {
+        System.out.println(
+                switch(Settings.Style){
+                    case Verbose -> "Here is your query history, sire!";
+                    case Normal -> "Retrieving query history...";
+                    case Silent -> "";
+                    case Communist -> "¨ˆø∑¢´∫ƒß∂ˆ¨˚ç∆√∫¡¡¡¡¡¡";
+                    default -> "Unknown style.";
+                }
+        );
+    }
 }
