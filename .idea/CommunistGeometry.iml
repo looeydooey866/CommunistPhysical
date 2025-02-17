@@ -12,6 +12,5 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="Python 3.9 interpreter library" level="application" />
   </component>
 </module>

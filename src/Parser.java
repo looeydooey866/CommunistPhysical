@@ -5,21 +5,24 @@ class Parser{
     private Scanner scanner = null;
     private ArrayList<String> keywords = null;
     private HashMap<String, Vector> dataTable = null;
+    private ArrayList<Character> multiVectorOperators = null;
 
-    public Parser(Scanner scanner, ArrayList<String> keywords, HashMap<String, Vector> dataTable){
+    public Parser(Scanner scanner, ArrayList<String> keywords, HashMap<String, Vector> dataTable, ArrayList<Character> multiVectorOperators){
         this.scanner = scanner;
         this.keywords = keywords;
         this.dataTable = dataTable;
+        this.multiVectorOperators = multiVectorOperators;
     }
 
-    public Parser(String s, ArrayList<String> keywords, HashMap<String, Vector> dataTable){
+    public Parser(String s, ArrayList<String> keywords, HashMap<String, Vector> dataTable, ArrayList<Character> multiVectorOperators){
         this.scanner = new Scanner(s);
         this.keywords = keywords;
         this.dataTable = dataTable;
+        this.multiVectorOperators = multiVectorOperators;
     }
 
     public Parser(){
-        this((Scanner) null, (ArrayList) null, (HashMap<String, Vector>) null);
+        this((Scanner) null, (ArrayList) null, (HashMap<String, Vector>) null, (ArrayList) null);
     }
 
     public void setKeywords(ArrayList<String> keywords){
@@ -254,63 +257,60 @@ class Parser{
         return res;
     }
 
-    // a🍍b
-    // Ωåœ∑ß≈∂´çƒ®√©†∫º¡˙•¡º•™¡£ºª£™¢¢∞£¶•ª˙¥˜∆¨µ˚ˆ≤¬ø
-    // d = ∑[a,b,c]
-    // d = ∆[a,b]
-    // d = delta[a,b]
-    public Stack<String> tokenize(){
-        Stack<String> res = new Stack<>();
+    public Queue<String> tokenize(){
+        Queue<String> res = new LinkedList<>();
         while (this.hasNextChar()){
             this.consumeWhitespace();
-            if (Character.isAlphabetic(this.peekChar())){
+            if (Character.isAlphabetic(this.peekChar()) && !multiVectorOperators.contains(this.peekChar())){
                 String s = "";
-                while (this.hasNextChar() && Character.isAlphabetic(this.peekChar())){
+                while (this.hasNextChar() && (Character.isLetterOrDigit(this.peekChar())))
                     s += this.nextChar();
-                }
                 if (keywords.contains(s)){
                     s += this.nextChar();
                     int balance = 1;
                     while (this.hasNextChar()){
-                        if (this.peekChar() == '('){
+                        if (this.peekChar() == '(')
                             balance++;
-                        }
-                        else if (this.peekChar() == ')'){
+                        else if (this.peekChar() == ')')
                             balance--;
-                        }
                         s += this.nextChar();
-                        if (balance <= 0){
+                        if (balance <= 0)
                             break;
-                        }
                     }
                 }
-                res.push(s);
+                res.offer(s);
             }
             else {
-                res.push(this.nextSingleString());
+                if (multiVectorOperators.contains(this.peekChar())){
+                    Character op = this.nextChar();
+                    this.nextChar();
+                    int balance = 1;
+                    String vts = "";
+                    while (this.hasNextChar()){
+                        Character now = this.nextChar();
+                        if (now == '(')
+                            balance++;
+                        else if (now == ')')
+                            balance--;
+                        if (balance <= 0)
+                            break;
+                        vts += now;
+                    }
+                    ArrayList<String> split = splitEncode(vts,',');
+                    res.offer(String.valueOf(op)+String.valueOf(split.size()));
+                    for (String vt : split) {
+                        res.offer(vt);
+                    }
+                }
+                else
+                    res.offer(this.nextSingleString());
             }
         }
         return res;
     }
 
-//    public static void main(String[] args){
-//        String eval = "Pol(3,4) + a + b - abaadbf + Rect(3,3)";
-//        ArrayList<String> keywords = new ArrayList<>();
-//        keywords.add("Pol");
-//        keywords.add("Rect");
-//        Parser parser = new Parser(new Scanner(""),keywords, new HashMap<>());
-//        parser.setInputSanitized(eval);
-//
-//        Stack<String> out = parser.tokenize();
-//        while (!out.empty()){
-//            String cur = out.pop();
-//            if (cur.length() != 1){
-//                if (cur.contains("(")){
-//                    VecRPNEngine engine = new VecRPNEngine(parser);
-//                    Vector.print(engine.takeVec(cur));
-//                }
-//            }
-//        }
-//    }
+    public ArrayList<Character> getMultiVectorOperators() {
+        return this.multiVectorOperators;
+    }
 }
 

@@ -2,11 +2,11 @@ import random
 import sys
 from datetime import datetime
 from math import floor
-
-now = datetime.now()
 from matplotlib.patches import FancyArrowPatch, ArrowStyle
 import matplotlib.pyplot as plt
 import os
+
+now = datetime.now()
 # num of vectors, then vector entries, then modifiers come afterward.
 fig, ax = plt.subplots()
 style = ArrowStyle("-|>", head_length=1, head_width=0.5)
@@ -57,7 +57,6 @@ if sys.argv[counter] == "display":
 elif sys.argv[counter] == "save":
     counter = counter + 1
     name = ""
-    print("hi, name given is " + sys.argv[counter])
     if sys.argv[counter] != "<<NO_NAME>>":
         name = sys.argv[counter]
     else:

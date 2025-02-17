@@ -1,15 +1,13 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
 
 public class VecRPNEngine {
-    public Stack<String> tokens = new Stack<>();
+    public Queue<String> tokens = new LinkedList<>();
     private final Stack<Character> operators = new Stack<Character>();
     private final Stack<Vector> vectors = new Stack<>();
     private Parser parsenator;
     private ArrayList<String> keywords;
     private HashMap<String,Vector> dataTable;
+    private ArrayList<Character> multiVectorOperators;
 
     public VecRPNEngine(){
 
@@ -19,37 +17,43 @@ public class VecRPNEngine {
         this.parsenator = parser;
         this.keywords = parsenator.getKeywords();
         this.dataTable = parsenator.getDataTable();
+        this.multiVectorOperators = parsenator.getMultiVectorOperators();
     }
 
     public boolean isUnary(Character c){
         return (c == '#' || c == '=');
     }
 
-    public  boolean ignore(Character c){
+    public boolean ignore(Character c){
         return switch(c){
             case ' ' -> true;
             default -> false;
         };
     }
 
-    public  boolean isSymbol(Character c){
+    public boolean isSymbol(Character c){
         return isOperator(c) || c=='('||c==')';
     }
 
     public boolean isSymbol(String s){
-        return (s.length() == 1 && isSymbol(s.charAt(0)));
+        return (isSymbol(s.charAt(0)));
     }
 
-    public  boolean isOperator(Character c){
+    public boolean isOperator(Character c){
         return (
                 c == '+' ||
                         c == '-' ||
                         c == '#' ||
-                        c == '='
+                        c == '=' ||
+                        c == 'Σ'
         );
     }
 
-    public  void operate(Character operator){
+    public boolean isMultiVecOp(Character c){
+        return this.multiVectorOperators.contains(c);
+    }
+
+    public void operate(Character operator){
         if (isUnary(operator)) {
             Vector left = vectors.pop();
             switch(operator){
@@ -67,40 +71,58 @@ public class VecRPNEngine {
         }
     }
 
-    public  int priority(Character operator){
-        if (isUnary(operator)){
+    public void operateMulti(Character operator, int count){
+        switch(operator){
+            case 'Σ' -> {
+                Vector temp = new Vector();
+                temp.recform.setCoords(0,0);
+                for (int i=0;i<count;i++){
+                    temp.add(vectors.pop());
+                }
+                vectors.push(temp);
+            }
+        }
+    }
+
+    public int priority(Character operator){
+        if (operator == 'Σ')
+            return 3;
+        else if (isUnary(operator))
             return 2;
-        }
-        else if (operator == '+' || operator == '-'){
+        else if (operator == '+' || operator == '-')
             return 1;
-        }
-        else {
+        else
             return -1;
-        }
     }
 
-    public  boolean isVecOp(Character operator){
-        return (operator == '+' || operator == '-' || operator == '#' || operator == '=');
+    public boolean isVecOp(Character operator){
+        return (operator == '+' || operator == '-' || operator == '#' || operator == '=' || operator == 'Σ');
     }
 
-    public  Vector evaluate(){
+    public Vector evaluate(){
         parsenator.consumeWhitespace();
         tokens = parsenator.tokenize();
         operators.clear();
         vectors.clear();
-        final int n = tokens.size();
         boolean unary = true;
-        while (!tokens.empty()) {
-
-            String s = tokens.pop();
+        while (!tokens.isEmpty()) {
+            String s = tokens.poll();
             if (isSymbol(s)){
                 Character c = s.charAt(0);
-                if (isOperator(c)) {
-                    while (!operators.empty() &&
-                        ((!unary && priority(operators.peek()) >= priority(c))) ||
-                        (unary && priority(operators.peek()) > priority(c))
-                    ) {
-                        operate(operators.pop());
+                if (isMultiVecOp(c)){
+                    int count = Integer.parseInt(s.substring(1));
+                    for (int i=0;i<count;i++)
+                        vectors.push(takeVec(tokens.poll()));
+                    operateMulti(c,count);
+                    unary = false;
+                } else if (isOperator(c)) {
+                    if (!operators.isEmpty()) {
+                        while (!operators.isEmpty() &&
+                                ((!unary && priority(operators.peek()) >= priority(c))) ||
+                                (unary && priority(operators.peek()) > priority(c))
+                        ) {
+                            operate(operators.pop());
+                        }
                     }
                     if (!unary) {
                         operators.push(c);
@@ -134,7 +156,7 @@ public class VecRPNEngine {
         return vectors.peek();
     }
 
-    public  Vector eval(String s){
+    public Vector eval(String s){
         String str = s;
         s = "";
         for (int i=0;i<str.length();i++){
@@ -261,7 +283,6 @@ public class VecRPNEngine {
         }
         return vectors.peek();
     }
-    // a + Pol(3,4) + Rect(-1,-1) -> Vector(a,b,c,d)
 
     public Vector takeVec(String s){
         String str = "";
