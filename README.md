@@ -29,3 +29,10 @@ CommunistPhysical is a Java-based program designed to assist our association wit
 
 - **Point Mass Class**
   A class which allows you to create a Point Mass object, which can have multiple forces applied on it.
+
+## **To contribute,**
+- Always create a new branch for your new feature/edit.
+- Commit early and often to avoid a big chunk of changes.
+- Before merging, create a pull request and confirm with others if it is valid.
+- Ensure that your code is readable and your variable/function names make sense to the developers.
+- Do join the Discord server for updates and discussion with other devs (Email our.soviet.solutions@gmail.com to request an invite.)
