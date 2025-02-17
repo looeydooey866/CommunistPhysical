@@ -12,13 +12,15 @@ public class Interactor {
     public final ArrayList<String> keywords = new ArrayList<String>(){{add("Pol");add("Rect");}};
     public final ArrayList<Character> multiVectorOperators = new ArrayList<Character>(){{add('Σ');}};
     private final Parser parsenator = new Parser(new Scanner(""),this.keywords,this.dataTable,this.multiVectorOperators);
+    private final History history = new History();
 
     public void query(){
         Voicelines.askQuery();
     }
 
     public void acceptQuery() throws Exception{
-        parsenator.setInput(reader.nextLine());
+        String query = reader.nextLine();
+        parsenator.setInput(query);
 
         String queryType = parsenator.next();
 
@@ -44,9 +46,15 @@ public class Interactor {
             case "alias" -> alias();
             case "unalias" -> unalias();
             case "pyplot" -> pyplot();
+            case "history" -> history();
             default -> unknownQuery();
         }
+
+        if (!queryType.equals("history"))
+            history.log(query);
     }
+
+
 
     private void terminate(){
         Voicelines.announceTermination();
@@ -208,6 +216,11 @@ public class Interactor {
         if (aliases.containsKey(removal)) {
             aliases.remove(removal);
         }
+    }
+
+    private void history() {
+        Voicelines.historyRevealed();
+        System.out.println(this.history.poll());
     }
 
     private void changeStyle(){
