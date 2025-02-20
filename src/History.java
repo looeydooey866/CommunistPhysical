@@ -6,7 +6,10 @@ public class History {
     private FileWriter history;
     private File historyFile;
 
-
+    public History(){
+        this.history = null;
+        this.historyFile = null;
+    }
 
     public History(String histFile){
         this.historyFile = new File(histFile);

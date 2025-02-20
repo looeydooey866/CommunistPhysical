@@ -11,11 +11,15 @@ public class Velocity extends Vector{
     public Velocity(Rect x) {
         super(x);
     }
+
     public Velocity(Displacement d, double T){
-        super(d.getDisp().scalarMult(1/T));
+        super(d.getDisp().scale(1/T));
     }
 
-    public Rect getVelocity(){
-        return this.recform;
+    public Velocity getVelocity(){
+        return this;
+    }
+
+    public static void main(String[] args){
     }
 }

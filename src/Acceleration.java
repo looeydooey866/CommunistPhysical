@@ -11,10 +11,10 @@ public class Acceleration extends Vector{
         super(x);
     }
     public Acceleration(Velocity v, double T){
-        super(v.getVelocity().scalarMult(1/T));
+        super(v.getVelocity().scale(1/T));
     }
 
-    public Rect getAcceleration(){
-        return this.recform;
+    public Acceleration getAcceleration(){
+        return this;
     }
 }

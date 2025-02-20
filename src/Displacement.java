@@ -16,13 +16,13 @@ public class Displacement extends Vector{
     }
 
     public Displacement(Velocity avgV, double T){
-        super(avgV.getVelocity().scalarMult(T));
+        super(avgV.getVelocity().scale(T));
     }
 
 
 
-    public Rect getDisp(){
-        return this.recform;
+    public Displacement getDisp(){
+        return this;
     }
 
 }
