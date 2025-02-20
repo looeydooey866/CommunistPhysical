@@ -141,7 +141,7 @@ class Parser{
     public Character peekChar(){
         this.setDelimiter("");
         this.scanner.hasNext(".*");
-        return this.scanner.match().group(0).charAt(0);
+        return (Character)this.scanner.match().group(0).charAt(0);
     }
 
     public String nextLine(){
@@ -184,7 +184,7 @@ class Parser{
         if (Objects.equals('[',this.peekChar())){
             this.consume('[');
             String debog = this.takeUntil(']');
-            res = splitEncode(debog,',');
+            res = splitEncode(debog, ',');
         }
         else {
             String s = "";
@@ -195,10 +195,10 @@ class Parser{
                 s += this.nextChar();
                 int balance = 1;
                 while (this.hasNextChar()){
-                    if (this.peekChar() == '('){
+                    if (this.peekChar() == (Character)'('){
                         balance++;
                     }
-                    else if (this.peekChar() == ')'){
+                    else if (this.peekChar() == (Character)')'){
                         balance--;
                     }
                     s += this.nextChar();
@@ -261,6 +261,10 @@ class Parser{
         return res;
     }
 
+    public boolean isPineapple(Character c){
+        return (multiVectorOperators.contains(c));
+    }
+
     public Queue<String> tokenize(){
         Queue<String> res = new LinkedList<>();
         while (this.hasNextChar()){
@@ -273,9 +277,9 @@ class Parser{
                     s += this.nextChar();
                     int balance = 1;
                     while (this.hasNextChar()){
-                        if (this.peekChar() == '(')
+                        if (this.peekChar() == (Character)'(')
                             balance++;
-                        else if (this.peekChar() == ')')
+                        else if (this.peekChar() == (Character)')')
                             balance--;
                         s += this.nextChar();
                         if (balance <= 0)
@@ -292,9 +296,9 @@ class Parser{
                     String vts = "";
                     while (this.hasNextChar()){
                         Character now = this.nextChar();
-                        if (now == '(')
+                        if (now == (Character)'(')
                             balance++;
-                        else if (now == ')')
+                        else if (now == (Character)')')
                             balance--;
                         if (balance <= 0)
                             break;

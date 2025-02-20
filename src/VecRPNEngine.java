@@ -20,32 +20,38 @@ public class VecRPNEngine {
         this.multiVectorOperators = parsenator.getMultiVectorOperators();
     }
 
+    public void setTokens(ArrayList<String> tokens){
+        for (String s : tokens){
+            this.tokens.offer(s);
+        }
+    }
+
     public boolean isUnary(Character c){
-        return (c == '#' || c == '=');
+        return (c == (Character)'#' || c == (Character)'=');
     }
 
     public boolean ignore(Character c){
-        return switch(c){
+        return switch(c.charValue()){
             case ' ' -> true;
             default -> false;
         };
     }
 
     public boolean isSymbol(Character c){
-        return isOperator(c) || c=='('||c==')';
+        return isOperator(c) || c==(Character)'('||c==(Character)')';
     }
 
     public boolean isSymbol(String s){
-        return (isSymbol(s.charAt(0)));
+        return (isSymbol((Character)s.charAt(0)));
     }
 
     public boolean isOperator(Character c){
         return (
-                c == '+' ||
-                        c == '-' ||
-                        c == '#' ||
-                        c == '=' ||
-                        c == 'Σ'
+                c == (Character)'+' ||
+                        c == (Character)'-' ||
+                        c == (Character)'#' ||
+                        c == (Character)'=' ||
+                        isMultiVecOp(c)
         );
     }
 
@@ -56,7 +62,7 @@ public class VecRPNEngine {
     public void operate(Character operator){
         if (isUnary(operator)) {
             Vector left = vectors.pop();
-            switch(operator){
+            switch(operator.charValue()){
                 case '#' -> vectors.push(left);
                 case '=' -> vectors.push(new Vector(new Rect(-left.recform.getX(),-left.recform.getY())));
             }
@@ -64,7 +70,7 @@ public class VecRPNEngine {
         else {
             Vector right = vectors.pop();
             Vector left = vectors.pop();
-            switch(operator){
+            switch(operator.charValue()){
                 case '+' -> vectors.push(Vector.sum(left, right));
                 case '-' -> vectors.push(Vector.minus(left, right));
             }
@@ -72,10 +78,9 @@ public class VecRPNEngine {
     }
 
     public void operateMulti(Character operator, int count){
-        switch(operator){
-            case 'Σ' -> {
-                Vector temp = new Vector();
-                temp.recform.setCoords(0,0);
+        switch(operator.charValue()){
+            case '∑' -> {
+                Vector temp = new Vector(0,0,0,0);
                 for (int i=0;i<count;i++){
                     temp.add(vectors.pop());
                 }
@@ -85,23 +90,27 @@ public class VecRPNEngine {
     }
 
     public int priority(Character operator){
-        if (operator == 'Σ')
+        if (isMultiVecOp(operator))
             return 3;
         else if (isUnary(operator))
             return 2;
-        else if (operator == '+' || operator == '-')
+        else if (operator == (Character)'+' || operator == (Character)'-')
             return 1;
         else
             return -1;
     }
 
     public boolean isVecOp(Character operator){
-        return (operator == '+' || operator == '-' || operator == '#' || operator == '=' || operator == 'Σ');
+        return (operator == (Character)'+' || operator == (Character)'-' || operator == (Character)'#' || operator == (Character)'=' || operator == (Character)'∑');
     }
 
     public Vector evaluate(){
         parsenator.consumeWhitespace();
         tokens = parsenator.tokenize();
+        return calculate();
+    }
+
+    public Vector calculate(){
         operators.clear();
         vectors.clear();
         boolean unary = true;
@@ -134,11 +143,11 @@ public class VecRPNEngine {
                         });
                     }
                     unary = true;
-                } else if (c == '(') {
+                } else if (c == (Character)'(') {
                     operators.push(c);
                     unary = true;
-                } else if (c == ')') {
-                    while (!operators.empty() && !(operators.peek() == '(')) {
+                } else if (c == (Character)')') {
+                    while (!operators.empty() && !(operators.peek() == (Character)'(')) {
                         operate(operators.pop());
                     }
                     operators.pop();
@@ -154,6 +163,7 @@ public class VecRPNEngine {
             operate(operators.pop());
         }
         return vectors.peek();
+
     }
 
     public Vector eval(String s){

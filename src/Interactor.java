@@ -10,7 +10,7 @@ public class Interactor {
     public boolean terminated = false;
     private final HashMap<String,String> aliases = new HashMap<>();
     public final ArrayList<String> keywords = new ArrayList<String>(){{add("Pol");add("Rect");}};
-    public final ArrayList<Character> multiVectorOperators = new ArrayList<Character>(){{add('Σ');}};
+    public final ArrayList<Character> multiVectorOperators = new ArrayList<Character>(){{add( '∑');}};
     private final Parser parsenator = new Parser(new Scanner(""),this.keywords,this.dataTable,this.multiVectorOperators);
     private final History history = new History();
 
@@ -74,7 +74,7 @@ public class Interactor {
 
     private void store(){
         ArrayList<String> vecnames = parsenator.takeList();
-        parsenator.takeUntil('=');
+        parsenator.takeUntil((Character)'=');
         VecRPNEngine engine = new VecRPNEngine(parsenator);
         Vector res = engine.evaluate();
         for (String s : vecnames){
@@ -91,8 +91,17 @@ public class Interactor {
         StringBuilder output = new StringBuilder();
         parsenator.consumeWhitespace();
         ArrayList<String> queries = parsenator.takeList();
-        for (String s : queries) {
-            Vector cur = takeVec(s); double d = cur.polform.getTheta().getRad(), a = Math.PI / 4 - d, r = cur.polform.getMag();
+        ArrayList<Vector> res = new ArrayList<>();
+        for (String query : queries){
+            Parser pa = new Parser(query, keywords, dataTable, multiVectorOperators);
+            VecRPNEngine engine = new VecRPNEngine(pa);
+            res.add(engine.evaluate());
+        }
+
+        for (int i=0;i<queries.size();i++) {
+            String s = queries.get(i);
+            Vector cur = res.get(i); 
+            double d = cur.polform.getTheta().getRad(), a = Math.PI / 4 - d, r = cur.polform.getMag();
             output.append(String.format("y\\cos %f+x\\sin %f=\\left(x\\cos %f-y\\sin %f\\right)\\left\\{y\\%ce0\\right\\}\\left\\{x^{2}+y^{2}\\le%f^{2}\\right\\}\n", a, a, a, a, (d <= Math.PI ? 'g' : 'l'), r));
             output.append(String.format("V_{%s}=\\ \\left(%s\\cos %s,%s\\sin %s\\right)\n",s,r,d,r,d));
         }
@@ -106,7 +115,6 @@ public class Interactor {
     private void pyplot() throws Exception { // please rehaul
         String que = parsenator.next();
         final String pythonFileName = "grapher.py";
-        // num of vectors, vector data, display/save, save name <<NO_NAME>> if default
 
         ArrayList<String> args = new ArrayList<>();
         ArrayList<String> names = new ArrayList<>();
@@ -124,9 +132,15 @@ public class Interactor {
             }
         }
         args.add(Integer.toString(names.size()));
-        for (String query : names) {
+        ArrayList<Vector> res = new ArrayList<>();
+        for (String query : names){
+            Parser pa = new Parser(query, keywords, dataTable, multiVectorOperators);
+            VecRPNEngine engine = new VecRPNEngine(pa);
+            res.add(engine.evaluate());
+        }
+        for (int i=0;i<names.size();i++) {
+            String query = names.get(i); Vector cur = res.get(i);
             args.add(query);
-            Vector cur = takeVec(query);
             args.add(String.valueOf(cur.recform.getX()));
             args.add(String.valueOf(cur.recform.getY()));
         }
@@ -166,9 +180,17 @@ public class Interactor {
 
     private void retrieve(){
         ArrayList<String> queries = parsenator.takeList();
-        for (String s : queries){
+        ArrayList<Vector> res = new ArrayList<>();
+        for (String query : queries){
+            Parser pa = new Parser(query, keywords, dataTable, multiVectorOperators);
+            VecRPNEngine engine = new VecRPNEngine(pa);
+            res.add(engine.evaluate());
+        }
+        for (int i=0;i<queries.size();i++){
+            String s = queries.get(i);
+            Vector cur = res.get(i);
             System.out.println("======= Vector " + s + " =======");
-            Vector.print(takeVec(s));
+            Vector.print(cur);
         }
     }
 
@@ -257,7 +279,7 @@ public class Interactor {
             str += s.charAt(i);
         }
         if (keywords.contains(str)){
-            ArrayList<String> split = Parser.split(s.substring(str.length()+1,s.length()-1),',');
+            ArrayList<String> split = Parser.split(s.substring(str.length()+1,s.length()-1), ',');
             if (Objects.equals(str,"Pol")){
                 return Vector.pol(RPNEngine.evaluate(split.get(0)), RPNEngine.evaluate(split.get(1)));
             }
