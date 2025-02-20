@@ -1,26 +1,49 @@
 public class Force extends Vector{
-    public Force(Vector v){
+    private String name = "force f";
+
+    public void setName(String s){
+        if (s == null){
+            this.name = "force f";
+        }
+        else {
+            this.name = s;
+        }
+    }
+
+    public String getName(){return this.name;}
+
+    public Force(String s, Vector v){
         super(v);
+        this.setName(s);
     }
 
-    public Force(Rect r){
+    public Force(String s,Rect r){
         super(r);
+        this.setName(s);
     }
 
-    public Force(Polar p){
+    public Force(String s, Polar p){
         super(p);
+        this.setName(s);
     }
 
-    public Force(Acceleration a, double mass){
+    public Force(String s, Acceleration a, double mass){
         super(a.getAcceleration().scale(mass));
+        this.setName(s);
     }
 
     public Force(){
         super(0,0,0,0);
+        this.setName(null);
     }
 
     public Force(Force other){
-        super(other);
+        this(other.getName(),other.recform);
+    }
+
+    public Force(String s){
+        super(0,0,0,0);
+        this.setName(s);
     }
 
     public Force getForce(){
@@ -32,7 +55,7 @@ public class Force extends Vector{
     }
 
     public static void main(String[] args){
-        Force f = new Force(new Rect(15,20));
+        Force f = new Force("Wind",new Rect(15,20));
         double mass = 5/*kg*/;
         Acceleration accel = f.accel(mass);
         Vector.print(f);
