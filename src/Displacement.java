@@ -3,6 +3,10 @@ public class Displacement extends Vector{
         super(a, b, c, d);
     }
 
+    public Displacement(Vector v){
+        super(v);
+    }
+
     public Displacement(Polar x) {
         super(x);
     }
@@ -24,7 +28,7 @@ public class Displacement extends Vector{
     }
 
     public Displacement getDisp(){
-        return this;
+        return new Displacement(this.recform);
     }
 
 

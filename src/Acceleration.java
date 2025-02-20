@@ -3,6 +3,10 @@ public class Acceleration extends Vector{
         super(a, b, c, d);
     }
 
+    public Acceleration(Vector v){
+        super(v);
+    }
+
     public Acceleration(Polar x) {
         super(x);
     }
@@ -19,6 +23,6 @@ public class Acceleration extends Vector{
     }
 
     public Acceleration getAcceleration(){
-        return this;
+        return new Acceleration(this.recform);
     }
 }

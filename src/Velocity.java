@@ -4,6 +4,10 @@ public class Velocity extends Vector{
         super(a, b, c, d);
     }
 
+    public Velocity(Vector v){
+        super(v);
+    }
+
     public Velocity(Polar x) {
         super(x);
     }
@@ -25,7 +29,7 @@ public class Velocity extends Vector{
     }
 
     public Velocity getVelocity(){
-        return this;
+        return new Velocity(this.recform);
     }
 
     public static void main(String[] args){
