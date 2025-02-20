@@ -13,6 +13,8 @@ CommunistPhysical is a Java-based program designed to assist our association wit
    - **Coordinate Conversion**: Seamlessly convert between polar and rectangular coordinate systems.
    - **Desmos Visualisation Compatibility**: Beautifully convert your vectors into equations that can be plugged in to Desmos for viewing!
    - **Pyplot Visualisation Compatibility**: Draw your vectors using the pyplot function! You can either save or directly display your graph.
+   ![image](https://github.com/user-attachments/assets/d9b77361-3a23-4d19-b080-98b90d871476)
+
 
 ---
 
