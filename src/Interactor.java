@@ -105,7 +105,7 @@ public class Interactor {
 
     private void pyplot() throws Exception { // please rehaul
         String que = parsenator.next();
-        final String pythonFileName = String.format("src%sgrapher.py", File.separator);
+        final String pythonFileName = "grapher.py";
         // num of vectors, vector data, display/save, save name <<NO_NAME>> if default
 
         ArrayList<String> args = new ArrayList<>();
@@ -140,7 +140,7 @@ public class Interactor {
         }
         // size - 2, if size - 1 divisible by 3
 
-        ProcessBuilder p = new ProcessBuilder("python3",pythonFileName);
+        ProcessBuilder p = new ProcessBuilder("python",pythonFileName);
         p.command().addAll(args);
         p.redirectErrorStream(true);
         Process proc = p.start();

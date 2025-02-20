@@ -21,8 +21,12 @@ class Parser{
         this.multiVectorOperators = multiVectorOperators;
     }
 
+    public Parser(String s){
+        this(s,null,null,null);
+    }
+
     public Parser(){
-        this((Scanner) null, (ArrayList) null, (HashMap<String, Vector>) null, (ArrayList) null);
+        this(null);
     }
 
     public void setKeywords(ArrayList<String> keywords){

@@ -9,8 +9,6 @@ public class run{
                 x.acceptQuery();
             }
             catch (Exception e){
-                System.out.println("Error. Caught something");
-                System.out.println(e.getMessage());
             }
         }
     }
