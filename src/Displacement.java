@@ -24,11 +24,11 @@ public class Displacement extends Vector{
     }
 
     public Displacement(Displacement other){
-        this(other.getDisp().recform);
+        this(other.recform);
     }
 
     public Displacement getDisp(){
-        return new Displacement(this.recform);
+        return new Displacement(this);
     }
 
 
@@ -42,5 +42,6 @@ public class Displacement extends Vector{
         Displacement s2 = new Displacement(s);
         Vector.print(s2.getDisp());
         //test
+        Displacement x = new Displacement(s2);
     }
 }

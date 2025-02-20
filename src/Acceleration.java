@@ -19,10 +19,10 @@ public class Acceleration extends Vector{
     }
 
     public Acceleration(Acceleration other){
-        this(other.getAcceleration().recform);
+        this(other.recform);
     }
 
     public Acceleration getAcceleration(){
-        return new Acceleration(this.recform);
+        return new Acceleration(this);
     }
 }

@@ -24,14 +24,11 @@ public class Velocity extends Vector{
         super(avgacc.getAcceleration().scale(T));
     }
     
-    public Velocity(Velocity other){
-        this(other.getVelocity().recform);
+    public Velocity(Velocity other){ //as a constructor
+        this(other.recform);
     }
 
-    public Velocity getVelocity(){
-        return new Velocity(this.recform);
-    }
-
-    public static void main(String[] args){
+    public Velocity getVelocity(){ //as a copy getter
+        return new Velocity(this);
     }
 }
