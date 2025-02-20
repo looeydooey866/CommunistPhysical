@@ -20,6 +20,12 @@ public class VecRPNEngine {
         this.multiVectorOperators = parsenator.getMultiVectorOperators();
     }
 
+    public void setTokens(ArrayList<String> tokens){
+        for (String s : tokens){
+            this.tokens.offer(s);
+        }
+    }
+
     public boolean isUnary(Character c){
         return (c == '#' || c == '=');
     }
@@ -102,6 +108,10 @@ public class VecRPNEngine {
     public Vector evaluate(){
         parsenator.consumeWhitespace();
         tokens = parsenator.tokenize();
+        return calculate();
+    }
+
+    public Vector calculate(){
         operators.clear();
         vectors.clear();
         boolean unary = true;
@@ -154,6 +164,7 @@ public class VecRPNEngine {
             operate(operators.pop());
         }
         return vectors.peek();
+
     }
 
     public Vector eval(String s){
