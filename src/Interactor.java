@@ -10,7 +10,7 @@ public class Interactor {
     public boolean terminated = false;
     private final HashMap<String,String> aliases = new HashMap<>();
     public final ArrayList<String> keywords = new ArrayList<String>(){{add("Pol");add("Rect");}};
-    public final ArrayList<Character> multiVectorOperators = new ArrayList<Character>(){{add('Σ');}};
+    public final ArrayList<Character> multiVectorOperators = new ArrayList<Character>(){{add( '∑');}};
     private final Parser parsenator = new Parser(new Scanner(""),this.keywords,this.dataTable,this.multiVectorOperators);
     private final History history = new History();
 
@@ -74,7 +74,7 @@ public class Interactor {
 
     private void store(){
         ArrayList<String> vecnames = parsenator.takeList();
-        parsenator.takeUntil('=');
+        parsenator.takeUntil((Character)'=');
         VecRPNEngine engine = new VecRPNEngine(parsenator);
         Vector res = engine.evaluate();
         for (String s : vecnames){
@@ -279,7 +279,7 @@ public class Interactor {
             str += s.charAt(i);
         }
         if (keywords.contains(str)){
-            ArrayList<String> split = Parser.split(s.substring(str.length()+1,s.length()-1),',');
+            ArrayList<String> split = Parser.split(s.substring(str.length()+1,s.length()-1), ',');
             if (Objects.equals(str,"Pol")){
                 return Vector.pol(RPNEngine.evaluate(split.get(0)), RPNEngine.evaluate(split.get(1)));
             }
