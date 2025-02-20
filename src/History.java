@@ -1,15 +1,40 @@
-public class History {
-    private String history;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Scanner;
 
-    public History(){
-        this.history = "";
+public class History {
+    private FileWriter history;
+    private File historyFile;
+
+
+
+    public History(String histFile){
+        this.historyFile = new File(histFile);
+        try{
+            historyFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void log(String s){
-        this.history += s + System.lineSeparator();
+        try{
+            history = new FileWriter(historyFile);
+            history.write(s+System.lineSeparator());
+            history.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String poll(){
-        return this.history + System.lineSeparator();
+        try{
+            Scanner fileReader = new Scanner(historyFile);
+            return fileReader.nextLine();
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        return "";
     }
 }

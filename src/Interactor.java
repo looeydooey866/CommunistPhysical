@@ -14,6 +14,9 @@ public class Interactor {
     private final Parser parsenator = new Parser(new Scanner(""),this.keywords,this.dataTable,this.multiVectorOperators);
     private final History history = new History();
 
+    public Interactor() {
+    }
+
     public void query(){
         Voicelines.askQuery();
     }
