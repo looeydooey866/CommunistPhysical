@@ -16,6 +16,10 @@ public class Velocity extends Vector{
         super(d.getDisp().scale(1/T));
     }
 
+    public Velocity(Acceleration avgacc, double T){
+        super(avgacc.getAcceleration().scale(T));
+    }
+
     public Velocity getVelocity(){
         return this;
     }

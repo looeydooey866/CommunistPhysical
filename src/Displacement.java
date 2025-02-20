@@ -11,18 +11,23 @@ public class Displacement extends Vector{
         super(x);
     }
 
-    public Displacement(Point pI, Point pF){
-        super(new Rect(pF.getX()-pI.getY(), pF.getY()-pI.getY()));
+    public Displacement(Point pi, Point pf){
+        super(new Rect(pf.getX()-pi.getX(), pf.getY()-pi.getY()));
     }
 
     public Displacement(Velocity avgV, double T){
         super(avgV.getVelocity().scale(T));
     }
 
-
-
     public Displacement getDisp(){
         return this;
     }
 
+    public static void main(String[] args){
+        Point st = new Point(1,3);
+        Point end = new Point(7,1);
+        Displacement s = new Displacement(st,end);
+        Vector.print(s.getDisp());
+        //test
+    }
 }
