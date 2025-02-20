@@ -3,8 +3,8 @@ import java.util.Objects;
 import static java.lang.Math.abs;
 
 public class Vector {
-    Rect recform = new Rect(0,0);
-    Polar polform = new Polar(0,0);
+    public Rect recform = new Rect(0,0);
+    public Polar polform = new Polar(0,0);
 
     public Vector(Rect x) {
         this.recform = new Rect(x);
