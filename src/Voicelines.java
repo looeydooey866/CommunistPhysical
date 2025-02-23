@@ -244,4 +244,18 @@ public class Voicelines {
                 }
         );
     }
+
+    public static void setFilePath(String path) {
+        System.out.println(
+                String.format(
+                switch(Settings.Style){
+                    case Verbose -> "Set file path to %s, sire!";
+                    case Normal -> "Set the file path to %s.";
+                    case Silent -> "";
+                    case Communist -> "Russia. %s";
+                    default -> "Unknown style.";
+                }
+                ,path)
+        );
+    }
 }
