@@ -258,4 +258,45 @@ public class Voicelines {
                 ,path)
         );
     }
+
+    public static void readingFile(String name){
+           System.out.println(
+                   String.format(
+                   switch(Settings.Style){
+                       case Verbose -> "OK Sire. Reading contents of file %s!";
+                       case Normal -> "Reading file and directing input from %s...";
+                       case Silent -> "";
+                       case Communist -> "DRINKING VODKA FROM %s";
+                       default -> "Unknown style.";
+                   }
+                   ,name)
+           );
+    }
+
+    public static void writeFile(String name){
+           System.out.println(
+                   String.format(
+                   switch(Settings.Style){
+                       case Verbose -> "OK Sire. Writing to file %s!";
+                       case Normal -> "Writing history to file %s...";
+                       case Silent -> "";
+                       case Communist -> "POURING VODKA TO %s";
+                       default -> "Unknown style.";
+                   }
+                   ,name)
+           );
+    }
+    public static void clearFile(String name){
+           System.out.println(
+                   String.format(
+                   switch(Settings.Style){
+                       case Verbose -> "OK Sire. Clearing contents of file %s!";
+                       case Normal -> "Clearing file %s...";
+                       case Silent -> "";
+                       case Communist -> "EMPTYING VODKA FROM BOTTLE %s";
+                       default -> "Unknown style.";
+                   }
+                   ,name)
+           );
+    }
 }

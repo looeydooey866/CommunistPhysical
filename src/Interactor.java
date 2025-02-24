@@ -62,6 +62,7 @@ public class Interactor {
                 case "setfile" -> setfile();
                 case "readfile" -> readfile();
                 case "writefile" -> writefile();
+                case "clearfile" -> clearfile();
                 default -> unknownQuery();
             }
             switch(queryType){
@@ -70,6 +71,7 @@ public class Interactor {
                 case "setfile" -> dn();
                 case "readfile" -> dn();
                 case "writefile" -> dn();
+                case "clearfile" -> dn();
                 default -> history.log(query);
             }
         }
@@ -81,6 +83,7 @@ public class Interactor {
 
     private void dn(){
         //lol
+        //stands for "do nothing" btw
     }
 
 
@@ -266,10 +269,17 @@ public class Interactor {
             System.out.println(line);
             queries.addLast(line);
         }
+        Voicelines.readingFile(this.history.getFileName());
     }
 
     private void writefile(){
         this.history.write();
+        Voicelines.writeFile(this.history.getFileName());
+    }
+
+    private void clearfile(){
+        this.history.clear();
+        Voicelines.clearFile(this.history.getFileName());
     }
     
     private void changeStyle(){

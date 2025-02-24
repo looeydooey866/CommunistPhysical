@@ -46,6 +46,16 @@ public class History {
 
     }
 
+    public void clear(){
+        try {
+            history = new FileWriter(historyFile);
+            history.write("");
+            history.close();
+        } catch(IOException e){
+            throw new RuntimeException(e);
+        }
+    }
+
     public String poll(){
         try{
             this.fileReader = new Scanner(historyFile);
@@ -74,5 +84,9 @@ public class History {
             System.err.println(e.toString());
         }
         return "";
+    }
+
+    public String getFileName(){
+        return this.historyFile.getName();
     }
 }
