@@ -7,12 +7,13 @@ import java.util.regex.Pattern;
 public class Interactor {
     private final HashMap<String,Vector> dataTable = new HashMap<>();
     private final Scanner reader = new Scanner(System.in);
+    private final Deque<String> queries = new ArrayDeque<>();
     public boolean terminated = false;
     private final HashMap<String,String> aliases = new HashMap<>();
     public final ArrayList<String> keywords = new ArrayList<String>(){{add("Pol");add("Rect");}};
     public final ArrayList<Character> multiVectorOperators = new ArrayList<Character>(){{add( '∑');}};
     private final Parser parsenator = new Parser(new Scanner(""),this.keywords,this.dataTable,this.multiVectorOperators);
-    private final History history = new History();
+    private History history = new History();
 
     public Interactor() {
     }
@@ -21,8 +22,15 @@ public class Interactor {
         Voicelines.askQuery();
     }
 
+    public void read(){
+        this.queries.addLast(this.reader.nextLine());
+    }
+
     public void acceptQuery() throws Exception{
-        String query = reader.nextLine();
+        if (queries.isEmpty()){
+            read();
+        }
+        String query = queries.removeFirst();
         parsenator.setInput(query);
 
         String queryType = parsenator.next();
@@ -36,27 +44,47 @@ public class Interactor {
             return;
         }
 
-        switch(queryType){
-            case "terminate" -> terminate();
-            case "list" -> list();
-            case "vec" -> store();
-            case "retrieve" -> retrieve();
-            case "thanks" -> thank();
-            case "set" -> set();
-            case "debug" -> debug();
-            case "calculate" -> calc();
-            case "desmos" -> desmos();
-            case "alias" -> alias();
-            case "unalias" -> unalias();
-            case "pyplot" -> pyplot();
-            case "history" -> history();
-            default -> unknownQuery();
+        try {
+            switch(queryType){
+                case "terminate" -> terminate();
+                case "list" -> list();
+                case "vec" -> store();
+                case "retrieve" -> retrieve();
+                case "thanks" -> thank();
+                case "set" -> set();
+                case "debug" -> debug();
+                case "calculate" -> calc();
+                case "desmos" -> desmos();
+                case "alias" -> alias();
+                case "unalias" -> unalias();
+                case "pyplot" -> pyplot();
+                case "history" -> history();
+                case "setfile" -> setfile();
+                case "readfile" -> readfile();
+                case "writefile" -> writefile();
+                case "clearfile" -> clearfile();
+                default -> unknownQuery();
+            }
+            switch(queryType){
+                case "terminate" -> dn();
+                case "history" -> dn();
+                case "setfile" -> dn();
+                case "readfile" -> dn();
+                case "writefile" -> dn();
+                case "clearfile" -> dn();
+                default -> history.log(query);
+            }
         }
-
-        if (!queryType.equals("history"))
-            history.log(query);
+        catch (Exception e) {
+            //Need voicelines. Someone pls help
+            System.err.println(e);
+        }
     }
 
+    private void dn(){
+        //lol
+        //stands for "do nothing" btw
+    }
 
 
     private void terminate(){
@@ -245,9 +273,37 @@ public class Interactor {
 
     private void history() {
         Voicelines.historyRevealed();
-        System.out.println(this.history.poll());
+        for (String s : this.history.logs){
+            System.out.println(s);
+        }
     }
 
+    private void setfile(){
+        String filepath = parsenator.next();
+        this.history = new History(filepath);
+        Voicelines.setFilePath(filepath);
+    }
+
+    private void readfile(){
+        Scanner x = new Scanner(this.history.totalPoll());
+        while (x.hasNextLine()){
+            String line = x.nextLine();
+            System.out.println(line);
+            queries.addLast(line);
+        }
+        Voicelines.readingFile(this.history.getFileName());
+    }
+
+    private void writefile(){
+        this.history.write();
+        Voicelines.writeFile(this.history.getFileName());
+    }
+
+    private void clearfile(){
+        this.history.clear();
+        Voicelines.clearFile(this.history.getFileName());
+    }
+    
     private void changeStyle(){
         String style = parsenator.next();
         Settings.setStyle(style);
