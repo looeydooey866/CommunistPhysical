@@ -15,7 +15,6 @@ plt.ylabel('y')
 ax.set_aspect('equal', adjustable='box')
 
 plt.text(0, 0, "0", horizontalalignment='left', wrap=True)
-plt.title('Free body diagram of several forces')
 
 plt.axhline(0, color='black')
 plt.axvline(0, color='black')
@@ -50,6 +49,11 @@ yabs_max = abs(max(ax.get_ylim(), key=abs))
 ax.set_ylim(ymin=-yabs_max, ymax=yabs_max)
 xabs_max = abs(max(ax.get_xlim(), key=abs))
 ax.set_xlim(xmin=-xabs_max, xmax=xabs_max)
+
+title = sys.argv[counter]
+counter = counter + 1
+
+plt.title(title)
 
 if sys.argv[counter] == "display":
     plt.show()
