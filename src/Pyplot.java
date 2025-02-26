@@ -13,22 +13,24 @@ public class Pyplot{
     }
 
     /*
-     *  Structure is as follows:
+     *  Structure for grapher args is as follows:
      *  filename (ignored, start at 1)
      *  number of vectors
      *  vector name, vector x, vector y
      *  title
      *  display/save
-     *  save -> name
+     *  if save -> name (to default, pass in "<<NO_NAME>>")
      */
 
-    public void build(String... s){
+    @SafeVarargs
+    public final void build(String... s){
         for (String x : s){
             args.add(x);
         }
     }
 
-    public void build(ArrayList<String>... a){
+    @SafeVarargs
+    public final void build(ArrayList<String>... a){
         for (ArrayList<String> v : a){
             for (String x : v){
                 args.add(x);
@@ -36,19 +38,23 @@ public class Pyplot{
         }
     }
 
-    public void run()throws Exception{
-        ProcessBuilder pb = new ProcessBuilder("python",pyplotFileName);
-        pb.command().addAll(args);
-        pb.redirectErrorStream(true);
-        Process proc = pb.start();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        String line;
-        int count = 0;
-        while ((line = reader.readLine()) != null)
-            System.err.println("Python output #" + count++ + ": " + line);
+    public void run(){
+        try {
+            ProcessBuilder pb = new ProcessBuilder("python",pyplotFileName);
+            pb.command().addAll(args);
+            pb.redirectErrorStream(true);
+            Process proc = pb.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            String line;
+            int count = 0;
+            while ((line = reader.readLine()) != null)
+                System.err.println("Python output #" + count++ + ": " + line);
 
-        int exitCode = proc.waitFor();
-        this.exitCode = exitCode;
+            int exitCode = proc.waitFor();
+            this.exitCode = exitCode;
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public int getExitCode(){

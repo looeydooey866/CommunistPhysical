@@ -116,7 +116,7 @@ public class Interactor {
     }
 
     private void desmos(){
-        StringBuilder output = new StringBuilder();
+        Desmos grapher = new Desmos();
         parsenator.consumeWhitespace();
         ArrayList<String> queries = parsenator.takeList();
         ArrayList<Vector> res = new ArrayList<>();
@@ -127,15 +127,14 @@ public class Interactor {
         }
 
         for (int i=0;i<queries.size();i++) {
-            String s = queries.get(i);
-            Vector cur = res.get(i); 
-            double d = cur.polform.getTheta().getRad(), a = Math.PI / 4 - d, r = cur.polform.getMag();
-            output.append(String.format("y\\cos %f+x\\sin %f=\\left(x\\cos %f-y\\sin %f\\right)\\left\\{y\\%ce0\\right\\}\\left\\{x^{2}+y^{2}\\le%f^{2}\\right\\}\n", a, a, a, a, (d <= Math.PI ? 'g' : 'l'), r));
-            output.append(String.format("V_{%s}=\\ \\left(%s\\cos %s,%s\\sin %s\\right)\n",s,r,d,r,d));
+            String name = queries.get(i);
+            Vector v = res.get(i); 
+            grapher.insertLabel(name,v);
+            grapher.insertVec(name,v);
         }
         Voicelines.desmos();
         System.out.println("========================================\n");
-        System.out.println(output);
+        grapher.display();
         System.out.println("\n========================================");
     }
 
