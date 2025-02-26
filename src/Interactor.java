@@ -116,7 +116,7 @@ public class Interactor {
     }
 
     private void desmos(){
-        StringBuilder output = new StringBuilder();
+        Desmos grapher = new Desmos();
         parsenator.consumeWhitespace();
         ArrayList<String> queries = parsenator.takeList();
         ArrayList<Vector> res = new ArrayList<>();
@@ -127,72 +127,55 @@ public class Interactor {
         }
 
         for (int i=0;i<queries.size();i++) {
-            String s = queries.get(i);
-            Vector cur = res.get(i); 
-            double d = cur.polform.getTheta().getRad(), a = Math.PI / 4 - d, r = cur.polform.getMag();
-            output.append(String.format("y\\cos %f+x\\sin %f=\\left(x\\cos %f-y\\sin %f\\right)\\left\\{y\\%ce0\\right\\}\\left\\{x^{2}+y^{2}\\le%f^{2}\\right\\}\n", a, a, a, a, (d <= Math.PI ? 'g' : 'l'), r));
-            output.append(String.format("V_{%s}=\\ \\left(%s\\cos %s,%s\\sin %s\\right)\n",s,r,d,r,d));
+            String name = queries.get(i);
+            Vector v = res.get(i); 
+            grapher.insertLabel(name,v);
+            grapher.insertVec(name,v);
         }
         Voicelines.desmos();
         System.out.println("========================================\n");
-        System.out.println(output);
+        grapher.display();
         System.out.println("\n========================================");
     }
 
 
     private void pyplot() throws Exception { // please rehaul
+        Pyplot grapher = new Pyplot();
         String que = parsenator.next();
-        final String pythonFileName = "grapher.py";
 
         ArrayList<String> args = new ArrayList<>();
-        ArrayList<String> names = new ArrayList<>();
+        ArrayList<String> vecs = new ArrayList<>();
         boolean usename = false;
         String name = null;
         {
-            Parser takeNames = new Parser(parsenator.nextLine(),this.keywords,this.dataTable,this.multiVectorOperators);
-            takeNames.consumeWhitespace();
-            names = takeNames.takeList();
-            takeNames.consumeWhitespace();
-            if (takeNames.hasNext() && takeNames.peek("\n").startsWith("->")) {
-                takeNames.consume('>'); //lol
-                name = takeNames.next("\n").trim();
+            Parser vecReader = new Parser(parsenator.nextLine(),this.keywords,this.dataTable,this.multiVectorOperators);
+            vecReader.consumeWhitespace();
+            vecs = vecReader.takeList();
+            vecReader.consumeWhitespace();
+            if (vecReader.hasNext() && vecReader.peek("\n").startsWith("->")) {
+                vecReader.consume('>');
+                name = vecReader.next("\n").trim();
                 usename = true;
             }
         }
-        args.add(Integer.toString(names.size()));
+        grapher.build(Integer.toString(vecs.size()));
         ArrayList<Vector> res = new ArrayList<>();
-        for (String query : names){
-            Parser pa = new Parser(query, keywords, dataTable, multiVectorOperators);
-            VecRPNEngine engine = new VecRPNEngine(pa);
+        for (String query : vecs){
+            VecRPNEngine engine = new VecRPNEngine(new Parser(query, keywords, dataTable, multiVectorOperators));
             res.add(engine.evaluate());
         }
-        for (int i=0;i<names.size();i++) {
-            String query = names.get(i); Vector cur = res.get(i);
-            args.add(query);
-            args.add(String.valueOf(cur.recform.getX()));
-            args.add(String.valueOf(cur.recform.getY()));
+        for (int i=0;i<vecs.size();i++) {
+            String query = vecs.get(i); Vector cur = res.get(i);
+            grapher.build(query,String.valueOf(cur.recform.getX()),String.valueOf(cur.recform.getY()));
         }
 
-        args.add(que);
-        if (Objects.equals(que,"save")) {
-            if (usename)
-                args.add(name);
-            else
-                args.add("<<NO_NAME>>");
-        }
-        // size - 2, if size - 1 divisible by 3
+        grapher.build("Free body diagram of several forces",que);
+        if (Objects.equals(que,"save"))
+            grapher.build((usename?name:"<<NO_NAME>>"));
 
-        ProcessBuilder p = new ProcessBuilder("python",pythonFileName);
-        p.command().addAll(args);
-        p.redirectErrorStream(true);
-        Process proc = p.start();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        String line;
-        while ((line = reader.readLine()) != null)
-            System.err.println("Python output: " + line);
-
-        int exitCode = proc.waitFor();
-        if (exitCode == 0){ //need some voicelines for this
+        grapher.run();
+        
+        if (grapher.getExitCode() == 0){ //need some voicelines for this
             if (Objects.equals(que, "save")) {
                 if (usename)
                     Voicelines.pyplot(name);
@@ -203,7 +186,7 @@ public class Interactor {
                 Voicelines.pyplotDisplayed();
         }
         else
-            Voicelines.pyplotError(exitCode);
+            Voicelines.pyplotError(grapher.getExitCode());
     }
 
     private void retrieve(){
