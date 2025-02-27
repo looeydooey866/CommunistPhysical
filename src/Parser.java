@@ -261,10 +261,6 @@ class Parser{
         return res;
     }
 
-    public boolean isPineapple(Character c){
-        return (multiVectorOperators.contains(c));
-    }
-
     public Queue<String> tokenize(){
         Queue<String> res = new LinkedList<>();
         while (this.hasNextChar()){

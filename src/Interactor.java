@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 public class Interactor {
     private final HashMap<String,Vector> dataTable = new HashMap<>();
+    private final HashMap<String,PointMass> massesTable = new HashMap<>();
     private final Scanner reader = new Scanner(System.in);
     private final Deque<String> queries = new ArrayDeque<>();
     public boolean terminated = false;
@@ -49,6 +50,7 @@ public class Interactor {
                 case "terminate" -> terminate();
                 case "list" -> list();
                 case "vec" -> store();
+                case "pmass" -> pmass();
                 case "retrieve" -> retrieve();
                 case "thanks" -> thank();
                 case "set" -> set();
@@ -111,6 +113,17 @@ public class Interactor {
         Voicelines.stored(vecnames.toString());
     }
 
+    private void pmass(){
+        ArrayList<String> pmassnames = parsenator.takeList();
+        for (String s : pmassnames){
+            Parser x = new Parser(s);
+            String name = x.takeUntil((Character)':');
+            double v = RPNEngine.evaluate(x.nextLine());
+            massesTable.put(name,new PointMass(v));
+        }
+        Voicelines.pmass(pmassnames.toString());
+    }
+
     private void calc(){
         //calculations for velocity and acceleration goes here
     }
@@ -170,6 +183,52 @@ public class Interactor {
         }
 
         grapher.build("Free body diagram of several forces",que);
+        if (Objects.equals(que,"save"))
+            grapher.build((usename?name:"<<NO_NAME>>"));
+
+        grapher.run();
+        
+        if (grapher.getExitCode() == 0){ //need some voicelines for this
+            if (Objects.equals(que, "save")) {
+                if (usename)
+                    Voicelines.pyplot(name);
+                else
+                    Voicelines.pyplotDefaultName();
+            }
+            else if (Objects.equals(que, "display"))
+                Voicelines.pyplotDisplayed();
+        }
+        else
+            Voicelines.pyplotError(grapher.getExitCode());
+    }
+
+    private void drawPmass(){
+        Pyplot grapher = new Pyplot();
+        String que = parsenator.next();
+
+        ArrayList<String> args = new ArrayList<>();
+        String pmass;
+        boolean usename = false;
+        String name = null;
+        {
+            Parser vecReader = new Parser(parsenator.nextLine(),this.keywords,this.dataTable,this.multiVectorOperators);
+            vecReader.consumeWhitespace();
+            pmass = vecReader.next();
+            vecReader.consumeWhitespace();
+            if (vecReader.hasNext() && vecReader.peek("\n").startsWith("->")) {
+                vecReader.consume('>');
+                name = vecReader.next("\n").trim();
+                usename = true;
+            }
+        }
+        PointMass p = massesTable.get(pmass);
+        grapher.build(String.valueOf(p.getN()));
+
+        for (Force f : p.getForces()) {
+            grapher.build(f.getName(),String.valueOf(f.recform.getX()),String.valueOf(f.recform.getY()));
+        }
+
+        grapher.build("Free body diagram of point mass " + pmass, que);
         if (Objects.equals(que,"save"))
             grapher.build((usename?name:"<<NO_NAME>>"));
 

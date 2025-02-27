@@ -110,6 +110,11 @@ public class VecRPNEngine {
         return calculate();
     }
 
+    public Vector evalute(Queue<String> tokens){
+        this.tokens = tokens;
+        return calculate();
+    }
+
     public Vector calculate(){
         operators.clear();
         vectors.clear();

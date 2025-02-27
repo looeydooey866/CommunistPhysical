@@ -65,6 +65,16 @@ public class PointMass{
         this.applyForce("a",accel);
     }
 
+    public void push(PointMass other, Force f){
+        this.applyForce(f);
+        other.applyForce(new Force(f.getName(), f.scale(-1)));
+    }
+
+    public void pull(PointMass other, Force f){
+        other.applyForce(f);
+        this.applyForce(new Force(f.getName(),f.scale(-1)));
+    }
+
     public Force resultant(String name){
         Force res = new Force(name);
         for (Force v : forces){
